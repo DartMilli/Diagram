@@ -49,7 +49,8 @@ public class DotSeries {
 
     public void removePoint(double x, double y) {
         for (int i = 0; i < pieces; i++) {
-            if (getPointX(i) == x && getPointY(i) == y) {
+            if (Double.compare(getPointX(i), x) == 0
+                    && Double.compare(getPointY(i), y) == 0) {
                 removePoint(i);
             }
         }

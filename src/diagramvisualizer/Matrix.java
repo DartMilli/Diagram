@@ -101,7 +101,7 @@ public class Matrix {
             b = s;
         }
 
-        if (a == b) {
+        if (Double.compare(a, b) == 0) {
             this.setMatrixRnd(a);
         } else {
             for (int i = 0; i < row; i++) {
@@ -128,7 +128,7 @@ public class Matrix {
             b = s;
         }
 
-        if (a == b) {
+        if (Double.compare(a, b) == 0) {
             this.setMatrixRnd(a);
         } else {
             for (int i = 0; i < row; i++) {
@@ -204,7 +204,7 @@ public class Matrix {
 
     public Matrix getViceDeterminant(int row, int column) {
         double[][] vice = new double[A.length - 1][A.length - 1];
-        if (row > row || column > column || column != row) {
+        if (row > this.row || column > this.column || this.column != this.row) {
             vice = A;
         } else {
             int k = 0;
@@ -262,17 +262,15 @@ public class Matrix {
 
     public Matrix getInvers() {
         Matrix original = new Matrix(A);
-        Matrix transzponent = new Matrix(A.length);
         Matrix adjung = new Matrix(A.length);
-        Matrix invers = new Matrix(A.length);
-        Matrix plusMinus = new Matrix(A.length);
+        Matrix transzponent, invers, plusMinus;
 
         double det = original.getDeterminant();
 
         double temp;
         plusMinus = getSignMatrix(A.length);
 
-        if (original.getDeterminant() == 0) {
+        if (Double.doubleToRawLongBits(original.getDeterminant()) == 0) {
             return original;
         }
 
@@ -371,7 +369,8 @@ public class Matrix {
 
         int lastColumn = 0;
         for (int i = 0; i < out.getColumn(); i++) {
-            if (fullGauss[out.getRow() - 1][i] != 0.0 && lastColumn == 0) {
+            if (Double.doubleToRawLongBits(fullGauss[out.getRow() - 1][i]) != 0
+                    && lastColumn == 0) {
                 lastColumn = i;
             }
         }

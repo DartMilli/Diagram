@@ -64,14 +64,12 @@ public class Diagram extends JPanel {
     }
 
     private int calculateXCoordinate(double x) {
-        int out = 0;
-        out = (int) (zerusX + x * factorX);
+        int out = (int) (zerusX + x * factorX);
         return out;
     }
 
     private int calculateYCoordinate(double y) {
-        int out = 0;
-        out = (int) (zerusY - y * factorY);
+        int out = (int) (zerusY - y * factorY);
         return out;
     }
 
@@ -99,35 +97,36 @@ public class Diagram extends JPanel {
 
     private void drawRaster(Graphics g, Color c) {
         g.setColor(c);
-        for (int i = (int) 0; i < (int) maxX; i += rasterX) {
+        for (int i = 0; i < maxX; i += rasterX) {
             g.drawLine(calculateXCoordinate(i), 0, calculateXCoordinate(i), dimension.height);
         }
-        for (int i = (int) 0; i > (int) minX; i -= rasterX) {
+        for (int i = 0; i > minX; i -= rasterX) {
             g.drawLine(calculateXCoordinate(i), 0, calculateXCoordinate(i), dimension.height);
         }
-        for (int i = (int) 0; i < (int) maxY; i += rasterY) {
+        for (int i = 0; i < maxY; i += rasterY) {
             g.drawLine(0, calculateYCoordinate(i), dimension.width, calculateYCoordinate(i));
         }
-        for (int i = (int) 0; i > (int) minY; i -= rasterY) {
+        for (int i = 0; i > minY; i -= rasterY) {
             g.drawLine(0, calculateYCoordinate(i), dimension.width, calculateYCoordinate(i));
         }
     }
 
     private void drawCaptionX(Graphics g, Color c, boolean upOrDown, boolean leftOrRight) {
         g.setColor(c);
-        int length, ending, raster, rate;
+        int length;
+        double raster, rate, ending;
         int line = upOrDown ? 5 : -5;
         int size = upOrDown ? g.getFont().getSize() : -2;
-        ending = leftOrRight ? (int) maxX : (int) minX;
-        raster = leftOrRight ? (int) rasterX : -1 * (int) rasterX;
+        ending = leftOrRight ? maxX : minX;
+        raster = leftOrRight ? rasterX : -1 * rasterX;
         rate = ending / raster;
         for (int i = 0; i < rate; i++) {
-            length = g.getFontMetrics().stringWidth(Integer.toString(i * raster));
+            length = g.getFontMetrics().stringWidth(Double.toString(i * raster));
             g.drawLine(calculateXCoordinate(i * raster),
                     (int) zerusY - line,
                     calculateXCoordinate(i * raster),
                     (int) zerusY + line);
-            g.drawString(Integer.toString(i * raster),
+            g.drawString(Double.toString(i * raster),
                     calculateXCoordinate(i * raster) - length / 2,
                     (int) zerusY + size + line);
         }
@@ -135,19 +134,20 @@ public class Diagram extends JPanel {
 
     private void drawCaptionY(Graphics g, Color c, boolean upOrDown, boolean leftOrRight) {
         g.setColor(c);
-        int length, ending, raster, rate;
+        int length;
+        double ending, raster, rate;
         int line = upOrDown ? 5 : -5;
         int size = g.getFont().getSize();
-        ending = upOrDown ? (int) maxY : (int) minY;
-        raster = upOrDown ? (int) rasterY : -1 * (int) rasterY;
+        ending = upOrDown ? maxY : minY;
+        raster = upOrDown ? rasterY : -1 * rasterY;
         rate = ending / raster;
         for (int i = 0; i < rate; i++) {
-            length = leftOrRight ? -8 : g.getFontMetrics().stringWidth(Integer.toString(i * raster)) + 8;
+            length = leftOrRight ? -8 : g.getFontMetrics().stringWidth(Double.toString(i * raster)) + 8;
             g.drawLine((int) zerusX - line,
                     calculateYCoordinate(i * raster),
                     (int) zerusX + line,
                     calculateYCoordinate(i * raster));
-            g.drawString(Integer.toString(i * raster),
+            g.drawString(Double.toString(i * raster),
                     (int) zerusX - length,
                     calculateYCoordinate(i * raster) + size / 2 - 2);
         }
