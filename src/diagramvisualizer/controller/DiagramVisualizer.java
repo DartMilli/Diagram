@@ -1,5 +1,6 @@
-package diagramvisualizer;
+package diagramvisualizer.controller;
 
+import diagramvisualizer.view.Diagram;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;

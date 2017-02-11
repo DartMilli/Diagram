@@ -1,4 +1,6 @@
-package diagramvisualizer;
+package diagramvisualizer.model;
+
+import diagramvisualizer.model.DotSeries;
 
 /**
  *

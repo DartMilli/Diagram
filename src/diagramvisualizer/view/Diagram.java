@@ -1,5 +1,7 @@
-package diagramvisualizer;
+package diagramvisualizer.view;
 
+import diagramvisualizer.model.Regression;
+import diagramvisualizer.model.DotSeries;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;

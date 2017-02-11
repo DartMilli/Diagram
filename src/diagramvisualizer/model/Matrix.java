@@ -1,4 +1,4 @@
-package diagramvisualizer;
+package diagramvisualizer.model;
 
 /**
  *

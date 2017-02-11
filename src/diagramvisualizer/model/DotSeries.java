@@ -1,4 +1,4 @@
-package diagramvisualizer;
+package diagramvisualizer.model;
 
 import java.util.ArrayList;
 
