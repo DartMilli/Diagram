@@ -2,6 +2,7 @@ package diagramvisualizer.view;
 
 import diagramvisualizer.model.Regression;
 import diagramvisualizer.model.DotSeries;
+import diagramvisualizer.model.LagrangeInterpolate;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -33,10 +34,13 @@ public class Diagram extends JPanel {
         this.dimension = dimension;
         calculateZerus();
         graphs = new ArrayList<>();
+//        double[] xPoints = new double[]{1, 2, 3, 4, 5};
+//        double[] yPoints = new double[]{2, 3, 2, 0.5, 1.5};
         double[] xPoints = new double[]{111, 31, 55, 65, 14, 32, 105, 82, 130, 88, 28, 61, 65, 98};
         double[] yPoints = new double[]{12.4, 5.2, 5.5, 7.6, 1.6, 4.3, 9, 7.8, 10.5, 9.8, 2, 3.7, 3.5, 7.6};
         DotSeries data = new DotSeries(xPoints, yPoints);
         DotSeries sortedData = data.getSorted();
+
         Regression regression = new Regression(sortedData);
         DotSeries trend = new DotSeries(
                 new double[]{
@@ -47,8 +51,11 @@ public class Diagram extends JPanel {
                     regression.getSlope() * sortedData.getPointX(0) + regression.getIntersection(),
                     regression.getSlope() * sortedData.getPointX(sortedData.getPiecesOfPoints() - 1) + regression.getIntersection()
                 });
+        LagrangeInterpolate li = new LagrangeInterpolate(data);
+        DotSeries interpoltedData = li.getInterpolatedData();
         addGraph(sortedData);
         addGraph(trend);
+        addGraph(interpoltedData);
     }
 
     public void addGraph(DotSeries graf) {
@@ -283,5 +290,6 @@ public class Diagram extends JPanel {
         drawNumbers(g, Color.red, graphs.get(0));
         drawGraph(g, graphs.get(0), Color.red, false, 1, 4, 4);
         drawGraph(g, graphs.get(1), Color.BLACK, true, 1, 0, 2);
+        drawGraph(g, graphs.get(2), Color.GREEN, true, 1, 0, 1);
     }
 }

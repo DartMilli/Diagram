@@ -38,8 +38,8 @@ public class Matrix {
         return A;
     }
 
-    public double getMatrix(int s, int o) {
-        return this.A[s][o];
+    public double getMatrix(int row, int column) {
+        return this.A[row][column];
     }
 
     public int getRow() {
@@ -406,16 +406,16 @@ public class Matrix {
     }
 
     public static void main(String[] args) {
-        Matrix k = new Matrix(5, 6);
-        Matrix n;
+        Matrix k = new Matrix(100, 101);
         System.out.println("k mátrix:");
         k.setMatrixRnd(-1.0, 1.0);
         k.getMatrixConsole();
         System.out.println("k mátrix gauss:");
         k.getGauss().getMatrixConsole();
         System.out.println("k mátrix fullgauss:");
-        n = k.getFullGauss();
-        n.getMatrixConsole();
+        k.getFullGauss().getMatrixConsole();
+        System.out.println("k mátrix Inverze:");
+        k.getInvers().getMatrixConsole();
         System.out.println("k újra:");
         k.getMatrixConsole();
     }
