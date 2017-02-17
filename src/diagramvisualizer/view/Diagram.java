@@ -3,6 +3,7 @@ package diagramvisualizer.view;
 import diagramvisualizer.model.Regression;
 import diagramvisualizer.model.DotSeries;
 import diagramvisualizer.model.LagrangeInterpolate;
+import diagramvisualizer.model.SplineInterpolate;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -29,33 +30,35 @@ public class Diagram extends JPanel {
     private double zerusY;
     private double factorX;
     private double factorY;
+    private int captionRounding = 2;
 
     public Diagram(Dimension dimension) {
         this.dimension = dimension;
         calculateZerus();
         graphs = new ArrayList<>();
-//        double[] xPoints = new double[]{1, 2, 3, 4, 5};
-//        double[] yPoints = new double[]{2, 3, 2, 0.5, 1.5};
-        double[] xPoints = new double[]{111, 31, 55, 65, 14, 32, 105, 82, 130, 88, 28, 61, 65, 98};
-        double[] yPoints = new double[]{12.4, 5.2, 5.5, 7.6, 1.6, 4.3, 9, 7.8, 10.5, 9.8, 2, 3.7, 3.5, 7.6};
-        DotSeries data = new DotSeries(xPoints, yPoints);
-        DotSeries sortedData = data.getSorted();
 
-        Regression regression = new Regression(sortedData);
-        DotSeries trend = new DotSeries(
-                new double[]{
-                    sortedData.getPointX(0),
-                    sortedData.getPointX(sortedData.getPiecesOfPoints() - 1)
-                },
-                new double[]{
-                    regression.getSlope() * sortedData.getPointX(0) + regression.getIntersection(),
-                    regression.getSlope() * sortedData.getPointX(sortedData.getPiecesOfPoints() - 1) + regression.getIntersection()
-                });
+        double[] xPoints, yPoints;
+        if (true) {
+            xPoints = new double[]{1, 2, 3, 4, 5};
+            yPoints = new double[]{2, 3, 2, 0.5, 1.5};
+        } else {
+            xPoints = new double[]{111, 31, 55, 65, 14, 32, 105, 82, 130, 88, 28, 61, 65, 98};
+            yPoints = new double[]{12.4, 5.2, 5.5, 7.6, 1.6, 4.3, 9, 7.8, 10.5, 9.8, 2, 3.7, 3.5, 7.6};
+        }
+        DotSeries data = new DotSeries(xPoints, yPoints);
+        Regression regression = new Regression(data);
+        DotSeries trend = regression.getRegressionStraight();
         LagrangeInterpolate li = new LagrangeInterpolate(data);
-        DotSeries interpoltedData = li.getInterpolatedData();
-        addGraph(sortedData);
+        SplineInterpolate si = new SplineInterpolate(data);
+        DotSeries lagrangeInterpoltedData = li.getInterpolatedData();
+        DotSeries splineInterpoltedData = si.getInterpolatedData();
+
+        addGraph(data);
         addGraph(trend);
-        addGraph(interpoltedData);
+        addGraph(lagrangeInterpoltedData);
+        addGraph(splineInterpoltedData);
+
+        setAutoAxesUnits();
     }
 
     public void addGraph(DotSeries graf) {
@@ -83,7 +86,7 @@ public class Diagram extends JPanel {
     }
 
     private void calculateZerus() {
-        factorX = dimension.getWidth() / (maxX + Math.abs(minX));
+        factorX = dimension.getWidth() / (maxX - minX);
         zerusX = -1 * minX * factorX;
         factorY = dimension.getHeight() / (maxY - minY);
         zerusY = maxY * factorY;
@@ -106,16 +109,16 @@ public class Diagram extends JPanel {
 
     private void drawRaster(Graphics g, Color c) {
         g.setColor(c);
-        for (int i = 0; i < maxX; i += rasterX) {
+        for (double i = 0; i < maxX; i += rasterX) {
             g.drawLine(calculateXCoordinate(i), 0, calculateXCoordinate(i), dimension.height);
         }
-        for (int i = 0; i > minX; i -= rasterX) {
+        for (double i = 0; i > minX; i -= rasterX) {
             g.drawLine(calculateXCoordinate(i), 0, calculateXCoordinate(i), dimension.height);
         }
-        for (int i = 0; i < maxY; i += rasterY) {
+        for (double i = 0; i < maxY; i += rasterY) {
             g.drawLine(0, calculateYCoordinate(i), dimension.width, calculateYCoordinate(i));
         }
-        for (int i = 0; i > minY; i -= rasterY) {
+        for (double i = 0; i > minY; i -= rasterY) {
             g.drawLine(0, calculateYCoordinate(i), dimension.width, calculateYCoordinate(i));
         }
     }
@@ -130,15 +133,18 @@ public class Diagram extends JPanel {
         raster = leftOrRight ? rasterX : -1 * rasterX;
         rate = ending / raster;
         for (int i = 0; i < rate; i++) {
-            length = g.getFontMetrics().stringWidth(Double.toString(i * raster));
+            length = g.getFontMetrics().stringWidth(Double.toString(Math.round(
+                    i * raster * Math.pow(10, captionRounding) / Math.pow(10, captionRounding))
+            ));
             g.drawLine(calculateXCoordinate(i * raster),
                     (int) zerusY - line,
                     calculateXCoordinate(i * raster),
                     (int) zerusY + line);
-            g.drawString(Double.toString(i * raster),
-                    calculateXCoordinate(i * raster) - length / 2,
+            g.drawString(Double.toString(Math.round(i * raster * Math.pow(10, captionRounding)) / Math.pow(10, captionRounding)),
+                    calculateXCoordinate(Math.round(i * raster * Math.pow(10, captionRounding)) / Math.pow(10, captionRounding)) - length / 2,
                     (int) zerusY + size + line);
         }
+
     }
 
     private void drawCaptionY(Graphics g, Color c, boolean upOrDown, boolean leftOrRight) {
@@ -151,14 +157,15 @@ public class Diagram extends JPanel {
         raster = upOrDown ? rasterY : -1 * rasterY;
         rate = ending / raster;
         for (int i = 0; i < rate; i++) {
-            length = leftOrRight ? -8 : g.getFontMetrics().stringWidth(Double.toString(i * raster)) + 8;
+            length = leftOrRight ? -8 : g.getFontMetrics().stringWidth(Double.toString(Math.round(
+                    i * raster * Math.pow(10, captionRounding)) / Math.pow(10, captionRounding))) + 8;
             g.drawLine((int) zerusX - line,
                     calculateYCoordinate(i * raster),
                     (int) zerusX + line,
                     calculateYCoordinate(i * raster));
-            g.drawString(Double.toString(i * raster),
+            g.drawString(Double.toString(Math.round(i * raster * Math.pow(10, captionRounding)) / Math.pow(10, captionRounding)),
                     (int) zerusX - length,
-                    calculateYCoordinate(i * raster) + size / 2 - 2);
+                    calculateYCoordinate(Math.round(i * raster * Math.pow(10, captionRounding)) / Math.pow(10, captionRounding)) + size / 2 - 2);
         }
     }
 
@@ -275,6 +282,37 @@ public class Diagram extends JPanel {
         }
     }
 
+    public void setAutoAxesUnits() {
+        double xMax = 0.0, xMin = 0.0, yMax = 0.0, yMin = 0.0, x, y;
+        int pieces;
+        if (graphs.size() > 0) {
+            for (int i = 0; i < graphs.size(); i++) {
+                pieces = graphs.get(i).getPiecesOfPoints();
+                for (int j = 0; j < pieces; j++) {
+                    x = graphs.get(i).getPointX(j);
+                    y = graphs.get(i).getPointY(j);
+                    if (x < xMin) {
+                        xMin = x;
+                    } else if (x > xMax) {
+                        xMax = x;
+                    }
+                    if (y < yMin) {
+                        yMin = y;
+                    } else if (y > yMax) {
+                        yMax = y;
+                    }
+                }
+            }
+            maxX = Math.round(xMax + 1);
+            minX = Math.round(xMin - 1);
+            maxY = Math.round(yMax + 1);
+            minY = Math.round(yMin - 1);
+            rasterX = (maxX - minX) / 10;
+            rasterY = (maxY - minY) / 10;
+            calculateZerus();
+        }
+    }
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -284,12 +322,10 @@ public class Diagram extends JPanel {
         drawCoordinateAxes(g, Color.BLACK);
         drawDiagramFrame(g, Color.BLACK);
         drawCaption(g, Color.BLACK, 1);
-//        for (int i = 0; i < graphs.size(); i++) {
-//            drawGraph(g, graphs.get(i), Color.red, true, 1, 5, true);
-//        }
         drawNumbers(g, Color.red, graphs.get(0));
         drawGraph(g, graphs.get(0), Color.red, false, 1, 4, 4);
         drawGraph(g, graphs.get(1), Color.BLACK, true, 1, 0, 2);
         drawGraph(g, graphs.get(2), Color.GREEN, true, 1, 0, 1);
+        drawGraph(g, graphs.get(3), Color.BLUE, true, 1, 0, 1);
     }
 }

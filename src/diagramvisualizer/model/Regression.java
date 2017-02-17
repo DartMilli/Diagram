@@ -35,7 +35,7 @@ public class Regression {
     private boolean isLinearDataCalculated;
 
     public Regression(DotSeries data) {
-        this.data = data;
+        this.data = data.getSorted();
         isLinearDataCalculated = false;
     }
 
@@ -122,6 +122,20 @@ public class Regression {
     public double getIntersectionFault() {
         calculateLinearRegresion();
         return intersectionFault;
+    }
+
+    public DotSeries getRegressionStraight() {
+        calculateLinearRegresion();
+        double[] x = new double[2];
+        double[] y = new double[2];
+
+        x[0] = data.getPointX(0);
+        x[1] = data.getPointX(data.getPointX().length - 1);
+        y[0] = slope * x[0] + intersection;
+        y[1] = slope * x[1] + intersection;
+
+        DotSeries out = new DotSeries(x, y);
+        return out;
     }
 
     public static void main(String[] args) {
