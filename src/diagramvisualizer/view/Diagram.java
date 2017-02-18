@@ -310,6 +310,13 @@ public class Diagram extends JPanel {
             rasterX = (maxX - minX) / 10;
             rasterY = (maxY - minY) / 10;
             calculateZerus();
+        }else{
+            maxX = 10;
+            minX = -10;
+            maxY =10;
+            minY = -10;
+            rasterX = (maxX - minX) / 10;
+            rasterY = (maxY - minY) / 10;
         }
     }
 

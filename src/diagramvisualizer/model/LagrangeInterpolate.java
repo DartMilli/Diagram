@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 public class LagrangeInterpolate {
 
     private DotSeries data;
-    private DotSeries interpolatedData;   
+    private DotSeries interpolatedData;
     private int raster = 10;
     private int noOfOriginalPoints;
     private int noOfInterpolatedPoints;
@@ -22,6 +22,7 @@ public class LagrangeInterpolate {
         noOfInterpolatedPoints = noOfOriginalPoints * raster;
         coefficients = new double[noOfOriginalPoints];
         isVisualizable = true;
+        System.out.println("Lagrange");
         interpolate();
         generateInterpolatedData();
     }
@@ -60,7 +61,7 @@ public class LagrangeInterpolate {
                 y[i] += coefficients[j] * Math.pow(x[i], j);
             }
             System.out.println(x[i] + "," + y[i]);
-            if (x[i] > 10E16 || x[i] < 10E-16 || y[i] > 10E16 || y[i] < 10E-16) {
+            if (x[i] > 10E16 || x[i] < -1 * 10E16 || y[i] > 10E16 || y[i] < -1 * 10E-16) {
                 isVisualizable = false;
             }
         }
