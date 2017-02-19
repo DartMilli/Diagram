@@ -32,11 +32,17 @@ public class DiagramVisualizer {
                 window.setLayout(null);
                 window.setResizable(false);
                 int margin = 10;
-                Dimension viewDmsn = new Dimension(dmsn.width - 2 * margin - 6, dmsn.height - 2 * margin - 28);
-                Rectangle rctl = new Rectangle(new Point(margin, margin), viewDmsn);
-                JPanel veiw = new Diagram(viewDmsn);                
-                veiw.setBounds(rctl);
+                int menuWith = 150;
+                Dimension menuDmsn = new Dimension(menuWith, dmsn.height - 2 * margin - 28);
+                Dimension viewDmsn = new Dimension(dmsn.width - 2 * margin - 6 - menuDmsn.width, dmsn.height - 2 * margin - 28);
+                Rectangle viewRctl = new Rectangle(new Point(margin, margin), viewDmsn);
+                Rectangle menuRctl = new Rectangle(new Point(margin + viewDmsn.width, margin), menuDmsn);
+                Diagram veiw = new Diagram(viewDmsn);
+                Menu menu = new Menu(veiw, menuDmsn);
+                veiw.setBounds(viewRctl);
+                menu.setBounds(menuRctl);
                 window.add(veiw);
+                window.add(menu);
                 window.setVisible(true);
             }
         });

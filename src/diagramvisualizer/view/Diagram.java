@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 public class Diagram extends JPanel {
 
     private Dimension dimension;
-    private ArrayList<DotSeries> graphs;
+    private ArrayList<GraphToDraw> graphs;
     private double maxX = 200;
     private double maxY = 20.0;
     private double minX = -20;
@@ -31,6 +31,9 @@ public class Diagram extends JPanel {
     private double factorX;
     private double factorY;
     private int captionRounding = 2;
+    private boolean drawRaster = true;
+    private boolean drawCaption = true;
+    private int captionType = 1;
 
     public Diagram(Dimension dimension) {
         this.dimension = dimension;
@@ -53,15 +56,15 @@ public class Diagram extends JPanel {
         DotSeries lagrangeInterpoltedData = li.getInterpolatedData();
         DotSeries splineInterpoltedData = si.getInterpolatedData();
 
-        addGraph(data);
-        addGraph(trend);
-        addGraph(lagrangeInterpoltedData);
-        addGraph(splineInterpoltedData);
+        addGraph(new GraphToDraw(data, Color.red, false, 1, 4, 4));
+        addGraph(new GraphToDraw(trend, Color.BLACK, true, 1, 0, 2));
+        addGraph(new GraphToDraw(lagrangeInterpoltedData, Color.GREEN, true, 1, 0, 1));
+        addGraph(new GraphToDraw(splineInterpoltedData, Color.BLUE, true, 1, 0, 1));
 
         setAutoAxesUnits();
     }
 
-    public void addGraph(DotSeries graf) {
+    public void addGraph(GraphToDraw graf) {
         graphs.add(graf);
     }
 
@@ -71,7 +74,7 @@ public class Diagram extends JPanel {
         }
     }
 
-    public void removeGraph(DotSeries graf) {
+    public void removeGraph(GraphToDraw graf) {
         graphs.remove(graf);
     }
 
@@ -90,6 +93,7 @@ public class Diagram extends JPanel {
         zerusX = -1 * minX * factorX;
         factorY = dimension.getHeight() / (maxY - minY);
         zerusY = maxY * factorY;
+        repaint();
     }
 
     private void drawCoordinateAxes(Graphics g, Color c) {
@@ -169,8 +173,9 @@ public class Diagram extends JPanel {
         }
     }
 
-    private void drawCaption(Graphics g, Color c, int type) {
+    private void drawCaption(Graphics g, Color c) {
         g.setColor(c);
+        int type = captionType;
         switch (type) {
             case 2:
                 drawCaptionX(g, c, true, true);
@@ -194,87 +199,90 @@ public class Diagram extends JPanel {
         }
     }
 
-    private void drawNumbers(Graphics g, Color c, DotSeries dotSeries) {
-        if (graphs.contains(dotSeries)) {
-            g.setColor(c);
+    private void drawNumbers(Graphics g, GraphToDraw graphsToDraw) {
+        if (graphs.contains(graphsToDraw)) {
+            g.setColor(graphsToDraw.getColor());
             String s;
-            for (int i = 0; i < dotSeries.getPiecesOfPoints(); i++) {
-                s = "(" + dotSeries.getPointX(i) + ";" + dotSeries.getPointY(i) + ")";
+            for (int i = 0; i < graphsToDraw.getGraf().getPiecesOfPoints(); i++) {
+                s = "(" + graphsToDraw.getGraf().getPointX(i) + ";" + graphsToDraw.getGraf().getPointY(i) + ")";
                 g.drawString(s,
-                        calculateXCoordinate(dotSeries.getPointX(i)),
-                        calculateYCoordinate(dotSeries.getPointY(i)));
+                        calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)),
+                        calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)));
             }
         }
     }
 
-    private void drawGraph(
-            Graphics g,
-            DotSeries graf,
-            Color c,
-            boolean lines,
-            int type,
-            int size,
-            int lineSize
-    ) {
-        g.setColor(c);
-        for (int i = 0; i < graf.getPiecesOfPoints(); i++) {
-            switch (type) {
+    private void drawGraph(Graphics g, GraphToDraw graphsToDraw) {
+        g.setColor(graphsToDraw.getColor());
+        for (int i = 0; i < graphsToDraw.getGraf().getPiecesOfPoints(); i++) {
+            switch (graphsToDraw.getType()) {
                 case 2:
                     g.drawLine(
-                            calculateXCoordinate(graf.getPointX(i)) - size,
-                            calculateYCoordinate(graf.getPointY(i)) - size,
-                            calculateXCoordinate(graf.getPointX(i)) + size,
-                            calculateYCoordinate(graf.getPointY(i)) + size);
+                            calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)) - graphsToDraw.getSize(),
+                            calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)) - graphsToDraw.getSize(),
+                            calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)) + graphsToDraw.getSize(),
+                            calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)) + graphsToDraw.getSize());
                     g.drawLine(
-                            calculateXCoordinate(graf.getPointX(i)) - size,
-                            calculateYCoordinate(graf.getPointY(i)) + size,
-                            calculateXCoordinate(graf.getPointX(i)) + size,
-                            calculateYCoordinate(graf.getPointY(i)) - size);
+                            calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)) - graphsToDraw.getSize(),
+                            calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)) + graphsToDraw.getSize(),
+                            calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)) + graphsToDraw.getSize(),
+                            calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)) - graphsToDraw.getSize());
                     break;
                 case 3:
                     g.drawLine(
-                            calculateXCoordinate(graf.getPointX(i)) - size,
-                            calculateYCoordinate(graf.getPointY(i)),
-                            calculateXCoordinate(graf.getPointX(i)) + size,
-                            calculateYCoordinate(graf.getPointY(i)));
+                            calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)) - graphsToDraw.getSize(),
+                            calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)),
+                            calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)) + graphsToDraw.getSize(),
+                            calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)));
                     g.drawLine(
-                            calculateXCoordinate(graf.getPointX(i)),
-                            calculateYCoordinate(graf.getPointY(i)) + size,
-                            calculateXCoordinate(graf.getPointX(i)),
-                            calculateYCoordinate(graf.getPointY(i)) - size);
+                            calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)),
+                            calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)) + graphsToDraw.getSize(),
+                            calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)),
+                            calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)) - graphsToDraw.getSize());
                     break;
                 case 1:
                 default:
                     g.fillOval(
-                            calculateXCoordinate(graf.getPointX(i)) - size,
-                            calculateYCoordinate(graf.getPointY(i)) - size, 2 * size, 2 * size);
+                            calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)) - graphsToDraw.getSize(),
+                            calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)) - graphsToDraw.getSize(),
+                            2 * graphsToDraw.getSize(),
+                            2 * graphsToDraw.getSize());
                     break;
             }
-            if (lines) {
-                if (i < graf.getPiecesOfPoints() - 1) {
-                    if (lineSize <= 1) {
+            if (graphsToDraw.isLines()) {
+                if (i < graphsToDraw.getGraf().getPiecesOfPoints() - 1) {
+                    if (graphsToDraw.getLineSize() <= 1) {
                         g.drawLine(
-                                calculateXCoordinate(graf.getPointX(i)),
-                                calculateYCoordinate(graf.getPointY(i)),
-                                calculateXCoordinate(graf.getPointX(i + 1)),
-                                calculateYCoordinate(graf.getPointY(i + 1)));
+                                calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)),
+                                calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)),
+                                calculateXCoordinate(graphsToDraw.getGraf().getPointX(i + 1)),
+                                calculateYCoordinate(graphsToDraw.getGraf().getPointY(i + 1)));
                     } else {
                         int x1, x2, y1, y2;
-                        x1 = calculateXCoordinate(graf.getPointX(i));
-                        x2 = calculateXCoordinate(graf.getPointX(i + 1));
-                        y1 = calculateYCoordinate(graf.getPointY(i));
-                        y2 = calculateYCoordinate(graf.getPointY(i + 1));
+                        x1 = calculateXCoordinate(graphsToDraw.getGraf().getPointX(i));
+                        x2 = calculateXCoordinate(graphsToDraw.getGraf().getPointX(i + 1));
+                        y1 = calculateYCoordinate(graphsToDraw.getGraf().getPointY(i));
+                        y2 = calculateYCoordinate(graphsToDraw.getGraf().getPointY(i + 1));
                         double dx = x2 - x1;
                         double dy = y2 - y1;
                         double angle = Math.atan2(dy, dx);
                         int realLength = (int) Math.sqrt(dx * dx + dy * dy);
-                        g.fillOval(x1 - lineSize, y1 - lineSize, 2 * lineSize, 2 * lineSize);
-                        g.fillOval(x2 - lineSize, y2 - lineSize, 2 * lineSize, 2 * lineSize);
+                        g.fillOval(x1 - graphsToDraw.getLineSize(),
+                                y1 - graphsToDraw.getLineSize(),
+                                2 * graphsToDraw.getLineSize(),
+                                2 * graphsToDraw.getLineSize());
+                        g.fillOval(x2 - graphsToDraw.getLineSize(),
+                                y2 - graphsToDraw.getLineSize(),
+                                2 * graphsToDraw.getLineSize(),
+                                2 * graphsToDraw.getLineSize());
                         Graphics2D g2D = (Graphics2D) g.create();
                         AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
                         at.concatenate(AffineTransform.getRotateInstance(angle));
                         g2D.transform(at);
-                        g2D.fillRect(0, -lineSize, realLength, 2 * lineSize);
+                        g2D.fillRect(0,
+                                -graphsToDraw.getLineSize(),
+                                realLength,
+                                2 * graphsToDraw.getLineSize());
 
                     }
                 }
@@ -287,10 +295,10 @@ public class Diagram extends JPanel {
         int pieces;
         if (graphs.size() > 0) {
             for (int i = 0; i < graphs.size(); i++) {
-                pieces = graphs.get(i).getPiecesOfPoints();
+                pieces = graphs.get(i).getGraf().getPiecesOfPoints();
                 for (int j = 0; j < pieces; j++) {
-                    x = graphs.get(i).getPointX(j);
-                    y = graphs.get(i).getPointY(j);
+                    x = graphs.get(i).getGraf().getPointX(j);
+                    y = graphs.get(i).getGraf().getPointY(j);
                     if (x < xMin) {
                         xMin = x;
                     } else if (x > xMax) {
@@ -309,15 +317,109 @@ public class Diagram extends JPanel {
             minY = Math.round(yMin - 1);
             rasterX = (maxX - minX) / 10;
             rasterY = (maxY - minY) / 10;
-            calculateZerus();
-        }else{
+        } else {
             maxX = 10;
             minX = -10;
-            maxY =10;
+            maxY = 10;
             minY = -10;
             rasterX = (maxX - minX) / 10;
             rasterY = (maxY - minY) / 10;
         }
+        calculateZerus();
+    }
+
+    public double getMaxX() {
+        return maxX;
+    }
+
+    public void setMaxX(double maxX) {
+        if (maxX > minX) {
+            this.maxX = maxX;
+        }
+        calculateZerus();
+    }
+
+    public double getMaxY() {
+        return maxY;
+    }
+
+    public void setMaxY(double maxY) {
+        if (maxY > minY) {
+            this.maxY = maxY;
+        }
+        calculateZerus();
+    }
+
+    public double getMinX() {
+        return minX;
+    }
+
+    public void setMinX(double minX) {
+        if (minX < maxX) {
+            this.minX = minX;
+        }
+        calculateZerus();
+    }
+
+    public double getMinY() {
+        return minY;
+    }
+
+    public void setMinY(double minY) {
+        if (minY < maxY) {
+            this.minY = minY;
+        }
+        calculateZerus();
+    }
+
+    public double getRasterX() {
+        return rasterX;
+    }
+
+    public void setRasterX(double rasterX) {
+        this.rasterX = rasterX;
+        calculateZerus();
+    }
+
+    public double getRasterY() {
+        return rasterY;
+    }
+
+    public void setRasterY(double rasterY) {
+        this.rasterY = rasterY;
+        calculateZerus();
+    }
+
+    public boolean isDrawRaster() {
+        return drawRaster;
+    }
+
+    public void setDrawRaster(boolean drawRaster) {
+        this.drawRaster = drawRaster;
+        repaint();
+    }
+
+    public boolean isDrawCaption() {
+        return drawCaption;
+    }
+
+    public void setDrawCaption(boolean drawCaption) {
+        this.drawCaption = drawCaption;
+        repaint();
+    }
+
+    public int getCaptionType() {
+        return captionType;
+    }
+
+    public void setCaptionType(int captionType) {
+        if (captionType == 0) {
+            drawCaption = false;
+        } else {
+            drawCaption = true;
+        }
+        this.captionType = captionType;
+        repaint();
     }
 
     @Override
@@ -325,14 +427,17 @@ public class Diagram extends JPanel {
         super.paint(g);
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, dimension.width, dimension.height);
-        drawRaster(g, Color.LIGHT_GRAY);
+        if (drawRaster) {
+            drawRaster(g, Color.LIGHT_GRAY);
+        }
         drawCoordinateAxes(g, Color.BLACK);
         drawDiagramFrame(g, Color.BLACK);
-        drawCaption(g, Color.BLACK, 1);
-        drawNumbers(g, Color.red, graphs.get(0));
-        drawGraph(g, graphs.get(0), Color.red, false, 1, 4, 4);
-        drawGraph(g, graphs.get(1), Color.BLACK, true, 1, 0, 2);
-        drawGraph(g, graphs.get(2), Color.GREEN, true, 1, 0, 1);
-        drawGraph(g, graphs.get(3), Color.BLUE, true, 1, 0, 1);
+        if (drawCaption) {
+            drawCaption(g, Color.BLACK);
+        }
+        drawNumbers(g, graphs.get(0));
+        for (int i = 0; i < graphs.size(); i++) {
+            drawGraph(g, graphs.get(i));
+        }
     }
 }
