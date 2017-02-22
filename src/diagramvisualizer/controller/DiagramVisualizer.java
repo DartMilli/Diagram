@@ -7,8 +7,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
-import javax.swing.JPanel;
-
 /**
  *
  * @author Milán

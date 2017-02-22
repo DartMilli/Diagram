@@ -8,16 +8,18 @@ import java.awt.Color;
  * @author Milán
  */
 public class GraphToDraw {
-    
+
     private DotSeries graf;
     private Color color;
     private boolean lines;
     private int type;
     private int size;
     private int lineSize;
+    private String name;
 
-    public GraphToDraw(DotSeries graf, Color color, boolean lines, int type, int size, int lineSize) {
+    public GraphToDraw(DotSeries graf, String name, Color color, boolean lines, int type, int size, int lineSize) {
         this.graf = graf;
+        this.name = name;
         this.color = color;
         this.lines = lines;
         this.type = type;
@@ -29,6 +31,14 @@ public class GraphToDraw {
         return graf;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     public Color getColor() {
         return color;
     }
@@ -69,4 +79,8 @@ public class GraphToDraw {
         this.lineSize = lineSize;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }    
 }

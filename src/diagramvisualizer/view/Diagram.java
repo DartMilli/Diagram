@@ -33,7 +33,7 @@ public class Diagram extends JPanel {
     private int captionRounding = 2;
     private boolean drawRaster = true;
     private boolean drawCaption = true;
-    private int captionType = 1;
+    private String captionType = "0000";
 
     public Diagram(Dimension dimension) {
         this.dimension = dimension;
@@ -56,10 +56,10 @@ public class Diagram extends JPanel {
         DotSeries lagrangeInterpoltedData = li.getInterpolatedData();
         DotSeries splineInterpoltedData = si.getInterpolatedData();
 
-        addGraph(new GraphToDraw(data, Color.red, false, 1, 4, 4));
-        addGraph(new GraphToDraw(trend, Color.BLACK, true, 1, 0, 2));
-        addGraph(new GraphToDraw(lagrangeInterpoltedData, Color.GREEN, true, 1, 0, 1));
-        addGraph(new GraphToDraw(splineInterpoltedData, Color.BLUE, true, 1, 0, 1));
+        addGraph(new GraphToDraw(data, "data", Color.red, false, 1, 4, 4));
+        addGraph(new GraphToDraw(trend,"trend", Color.BLACK, true, 1, 0, 2));
+        addGraph(new GraphToDraw(lagrangeInterpoltedData, "lagrange", Color.GREEN, true, 1, 0, 1));
+        addGraph(new GraphToDraw(splineInterpoltedData,"spline", Color.BLUE, true, 1, 0, 1));
 
         setAutoAxesUnits();
     }
@@ -76,6 +76,11 @@ public class Diagram extends JPanel {
 
     public void removeGraph(GraphToDraw graf) {
         graphs.remove(graf);
+    }
+
+    public GraphToDraw[] getGraphs() {
+        GraphToDraw[] out = new GraphToDraw[graphs.size()];
+        return graphs.toArray(out);
     }
 
     private int calculateXCoordinate(double x) {
@@ -175,28 +180,70 @@ public class Diagram extends JPanel {
 
     private void drawCaption(Graphics g, Color c) {
         g.setColor(c);
-        int type = captionType;
-        switch (type) {
-            case 2:
-                drawCaptionX(g, c, true, true);
-                drawCaptionX(g, c, true, false);
-                drawCaptionY(g, c, true, true);
-                drawCaptionY(g, c, false, true);
-                break;
-            case 3:
-                drawCaptionX(g, c, false, true);
-                drawCaptionX(g, c, false, false);
-                drawCaptionY(g, c, true, false);
-                drawCaptionY(g, c, false, false);
+        int xPlusType = Character.getNumericValue(captionType.charAt(0));
+        int xMinusType = Character.getNumericValue(captionType.charAt(1));
+        int yPlusType = Character.getNumericValue(captionType.charAt(2));
+        int yMinusType = Character.getNumericValue(captionType.charAt(3));
+        switch (xPlusType) {
+            case 0:
                 break;
             case 1:
-            default:
+                drawCaptionX(g, c, false, true);
+                break;
+            case 2:
                 drawCaptionX(g, c, true, true);
-                drawCaptionX(g, c, false, false);
-                drawCaptionY(g, c, true, true);
-                drawCaptionY(g, c, false, false);
                 break;
         }
+        switch (xMinusType) {
+            case 0:
+                break;
+            case 1:
+                drawCaptionX(g, c, false, false);
+                break;
+            case 2:
+                drawCaptionX(g, c, true, false);
+                break;
+        }
+        switch (yPlusType) {
+            case 0:
+                break;
+            case 1:
+                drawCaptionY(g, c, true, false);
+                break;
+            case 2:
+                drawCaptionY(g, c, true, true);
+                break;
+        }
+        switch (yMinusType) {
+            case 0:
+                break;
+            case 1:
+                drawCaptionY(g, c, false, false);
+                break;
+            case 2:
+                drawCaptionY(g, c, false, true);
+                break;
+        }
+//            case 2:
+//                drawCaptionX(g, c, true, true);
+//                drawCaptionX(g, c, true, false);
+//                drawCaptionY(g, c, true, true);
+//                drawCaptionY(g, c, false, true);
+//                break;
+//            case 3:
+//                drawCaptionX(g, c, false, true);
+//                drawCaptionX(g, c, false, false);
+//                drawCaptionY(g, c, true, false);
+//                drawCaptionY(g, c, false, false);
+//                break;
+//            case 1:
+//            default:
+//                drawCaptionX(g, c, true, true);
+//                drawCaptionX(g, c, false, false);
+//                drawCaptionY(g, c, true, true);
+//                drawCaptionY(g, c, false, false);
+//                break;
+
     }
 
     private void drawNumbers(Graphics g, GraphToDraw graphsToDraw) {
@@ -408,12 +455,12 @@ public class Diagram extends JPanel {
         repaint();
     }
 
-    public int getCaptionType() {
+    public String getCaptionType() {
         return captionType;
     }
 
-    public void setCaptionType(int captionType) {
-        if (captionType == 0) {
+    public void setCaptionType(String captionType) {
+        if (captionType.equals("0000")) {
             drawCaption = false;
         } else {
             drawCaption = true;
