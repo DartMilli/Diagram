@@ -57,9 +57,9 @@ public class Diagram extends JPanel {
         DotSeries splineInterpoltedData = si.getInterpolatedData();
 
         addGraph(new GraphToDraw(data, "data", Color.red, false, 1, 4, 4));
-        addGraph(new GraphToDraw(trend,"trend", Color.BLACK, true, 1, 0, 2));
-        addGraph(new GraphToDraw(lagrangeInterpoltedData, "lagrange", Color.GREEN, true, 1, 0, 1));
-        addGraph(new GraphToDraw(splineInterpoltedData,"spline", Color.BLUE, true, 1, 0, 1));
+        addGraph(new GraphToDraw(trend, "trend", Color.BLACK, true, 0, 0, 2));
+        addGraph(new GraphToDraw(lagrangeInterpoltedData, "lagrange", Color.GREEN, true, 0, 0, 1));
+        addGraph(new GraphToDraw(splineInterpoltedData, "spline", Color.BLUE, true, 0, 0, 1));
 
         setAutoAxesUnits();
     }
@@ -224,34 +224,18 @@ public class Diagram extends JPanel {
                 drawCaptionY(g, c, false, true);
                 break;
         }
-//            case 2:
-//                drawCaptionX(g, c, true, true);
-//                drawCaptionX(g, c, true, false);
-//                drawCaptionY(g, c, true, true);
-//                drawCaptionY(g, c, false, true);
-//                break;
-//            case 3:
-//                drawCaptionX(g, c, false, true);
-//                drawCaptionX(g, c, false, false);
-//                drawCaptionY(g, c, true, false);
-//                drawCaptionY(g, c, false, false);
-//                break;
-//            case 1:
-//            default:
-//                drawCaptionX(g, c, true, true);
-//                drawCaptionX(g, c, false, false);
-//                drawCaptionY(g, c, true, true);
-//                drawCaptionY(g, c, false, false);
-//                break;
-
     }
 
     private void drawNumbers(Graphics g, GraphToDraw graphsToDraw) {
-        if (graphs.contains(graphsToDraw)) {
+        if (graphs.contains(graphsToDraw) && graphsToDraw.isNumbers()) {
             g.setColor(graphsToDraw.getColor());
             String s;
             for (int i = 0; i < graphsToDraw.getGraf().getPiecesOfPoints(); i++) {
-                s = "(" + graphsToDraw.getGraf().getPointX(i) + ";" + graphsToDraw.getGraf().getPointY(i) + ")";
+                s = "("
+                        + Math.round(graphsToDraw.getGraf().getPointX(i) * Math.pow(10, captionRounding)) / Math.pow(10, captionRounding)
+                        + ";"
+                        + Math.round(graphsToDraw.getGraf().getPointY(i) * Math.pow(10, captionRounding)) / Math.pow(10, captionRounding)
+                        + ")";
                 g.drawString(s,
                         calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)),
                         calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)));
@@ -263,6 +247,13 @@ public class Diagram extends JPanel {
         g.setColor(graphsToDraw.getColor());
         for (int i = 0; i < graphsToDraw.getGraf().getPiecesOfPoints(); i++) {
             switch (graphsToDraw.getType()) {
+                case 1:
+                    g.fillOval(
+                            calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)) - graphsToDraw.getSize(),
+                            calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)) - graphsToDraw.getSize(),
+                            2 * graphsToDraw.getSize(),
+                            2 * graphsToDraw.getSize());
+                    break;
                 case 2:
                     g.drawLine(
                             calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)) - graphsToDraw.getSize(),
@@ -287,18 +278,10 @@ public class Diagram extends JPanel {
                             calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)),
                             calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)) - graphsToDraw.getSize());
                     break;
-                case 1:
-                default:
-                    g.fillOval(
-                            calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)) - graphsToDraw.getSize(),
-                            calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)) - graphsToDraw.getSize(),
-                            2 * graphsToDraw.getSize(),
-                            2 * graphsToDraw.getSize());
-                    break;
             }
             if (graphsToDraw.isLines()) {
                 if (i < graphsToDraw.getGraf().getPiecesOfPoints() - 1) {
-                    if (graphsToDraw.getLineSize() <= 1) {
+                    if (graphsToDraw.getLineSize() < 1) {
                         g.drawLine(
                                 calculateXCoordinate(graphsToDraw.getGraf().getPointX(i)),
                                 calculateYCoordinate(graphsToDraw.getGraf().getPointY(i)),
@@ -482,8 +465,8 @@ public class Diagram extends JPanel {
         if (drawCaption) {
             drawCaption(g, Color.BLACK);
         }
-        drawNumbers(g, graphs.get(0));
         for (int i = 0; i < graphs.size(); i++) {
+            drawNumbers(g, graphs.get(i));
             drawGraph(g, graphs.get(i));
         }
     }

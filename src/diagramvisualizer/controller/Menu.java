@@ -2,9 +2,6 @@ package diagramvisualizer.controller;
 
 import diagramvisualizer.view.Diagram;
 import java.awt.Dimension;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 /**
@@ -16,7 +13,6 @@ public class Menu extends JPanel {
     private final Diagram view;
     private Dimension dmsn;
     private MinMaxControlPanel controlMinAndMax;
-    private JCheckBox chkRaster;
     private CaptionControlPanel captionControl;
     private GraphControlPanel graphcontrol;
 
@@ -28,16 +24,6 @@ public class Menu extends JPanel {
 
         captionControl = new CaptionControlPanel(this, dmsn.width - 2);
         add(captionControl);
-
-        chkRaster = new JCheckBox("Draw raster", true);
-        chkRaster.addItemListener(new ItemListener() {
-
-            @Override
-            public void itemStateChanged(ItemEvent ie) {
-                view.setDrawRaster(ie.getStateChange() == ItemEvent.SELECTED);
-            }
-        });
-        add(chkRaster);
 
         graphcontrol = new GraphControlPanel(this, dmsn.width - 2);
         add(graphcontrol);

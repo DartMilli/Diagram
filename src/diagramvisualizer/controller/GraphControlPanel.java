@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -25,24 +26,39 @@ import javax.swing.event.ChangeListener;
  *
  * @author szlavik.mi
  */
-public class GraphControlPanel extends JPanel {
+public class GraphControlPanel extends JPanel implements ActionListener, ChangeListener, ItemListener {
 
     private final Menu menu;
+    private GraphToDraw adjustedGraph;
     private JComboBox graphs;
     private JComboBox graphPointsView;
     private JSpinner sizeSpinner;
+    private JSpinner lineSizeSpinner;
     private JButton colorButton;
     private DefaultComboBoxModel comboModel;
     private JCheckBox chkDrawLine;
-    private JSpinner lineSizeSpinner;
+    private JCheckBox chkDrawNumber;
     private JLabel mainLabel = new JLabel("Adjust Graphs:");
-    private JLabel[] labels = new JLabel[6];
-    private String[] labelNames = {"Selected:", "Marker:", "Color:", "Size:", "Draw Line", "Line size:"};
+    private JLabel[] labels;
+    private String[] labelNames = {"Selected:", "Marker:", "Color:", "Size:", "Draw Line:", "Line size:", "Draw Num.:"};
 
-    public GraphControlPanel(final Menu menu, int width) {
+    private enum Names {
+        DATA,
+        POINTVIEW,
+        COLOR,
+        SIZE,
+        LINESIZE,
+        DRAWLINE,
+        DRAWNUMBER
+    }
+
+    public GraphControlPanel(Menu menu, int width) {
         this.menu = menu;
+        this.labels = new JLabel[labelNames.length];
+
         this.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 0;
@@ -57,78 +73,53 @@ public class GraphControlPanel extends JPanel {
             add(labels[i], c);
         }
 
-        comboModel = new DefaultComboBoxModel<GraphToDraw>(menu.getView().getGraphs());
-        graphs = new JComboBox(comboModel);
         c.gridx = 4;
         c.gridy = 1;
         c.gridwidth = 6;
+        comboModel = new DefaultComboBoxModel<GraphToDraw>(menu.getView().getGraphs());
+        graphs = new JComboBox(comboModel);
+        graphs.addActionListener(this);
+        graphs.setName(Names.DATA.name());
         add(graphs, c);
 
+        c.gridy = 2;
         String[] tmp = {"none", "O", "X", "+"};
         graphPointsView = new JComboBox(tmp);
-        graphPointsView.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                GraphToDraw selectedItem = (GraphToDraw) comboModel.getSelectedItem();
-                selectedItem.setType(graphPointsView.getSelectedIndex());
-                menu.getView().repaint();
-            }
-        });
-        c.gridy = 2;
+        graphPointsView.addActionListener(this);
+        graphPointsView.setName(Names.POINTVIEW.name());
         add(graphPointsView, c);
+
         c.gridy = 3;
-        colorButton = new JButton("Choose");
-        colorButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                GraphToDraw selectedItem = (GraphToDraw) comboModel.getSelectedItem();
-                Color initialColor = selectedItem.getColor();
-                Color choosenColor = JColorChooser.showDialog(null, "Change Color of " + selectedItem.getName(),
-                        initialColor);
-                if (choosenColor != null) {
-                    selectedItem.setColor(choosenColor);
-                    menu.getView().repaint();
-                }
-            }
-        });
+        colorButton = new JButton("Change");
+        colorButton.addActionListener(this);
+        colorButton.setName(Names.COLOR.name());
         add(colorButton, c);
+
         c.gridy = 4;
         sizeSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 15, 1));
-        sizeSpinner.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                GraphToDraw selectedItem = (GraphToDraw) comboModel.getSelectedItem();
-                selectedItem.setSize((Integer) sizeSpinner.getValue());
-                menu.getView().repaint();
-            }
-        });
+        sizeSpinner.addChangeListener(this);
+        sizeSpinner.setName(Names.SIZE.name());
         add(sizeSpinner, c);
-        
+
         c.gridy = 5;
         chkDrawLine = new JCheckBox("", false);
-        chkDrawLine.addItemListener(new ItemListener() {
+        chkDrawLine.addItemListener(this);
+        chkDrawLine.setName(Names.DRAWLINE.name());
+        add(chkDrawLine, c);
 
-            @Override
-            public void itemStateChanged(ItemEvent ie) {
-                GraphToDraw selectedItem = (GraphToDraw) comboModel.getSelectedItem();
-                selectedItem.setLines(ie.getStateChange() == ItemEvent.SELECTED);
-                menu.getView().repaint();
-            }
-        });
-        add(chkDrawLine,c);
-        
         c.gridy = 6;
         lineSizeSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 15, 1));
-        lineSizeSpinner.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                GraphToDraw selectedItem = (GraphToDraw) comboModel.getSelectedItem();
-                selectedItem.setLineSize((Integer) lineSizeSpinner.getValue());
-                menu.getView().repaint();
-            }
-        });
+        lineSizeSpinner.addChangeListener(this);
+        lineSizeSpinner.setName(Names.LINESIZE.name());
         add(lineSizeSpinner, c);
-        
+
+        c.gridy = 7;
+        chkDrawNumber = new JCheckBox("", false);
+        chkDrawNumber.addItemListener(this);
+        chkDrawNumber.setName(Names.DRAWNUMBER.name());
+        add(chkDrawNumber, c);
+
+        initInitialValues();
         setWidth(width);
     }
 
@@ -140,7 +131,64 @@ public class GraphControlPanel extends JPanel {
         graphPointsView.setPreferredSize(new Dimension(width / 2, graphPointsView.getPreferredSize().height));
         colorButton.setPreferredSize(new Dimension(width / 2, colorButton.getPreferredSize().height));
         sizeSpinner.setPreferredSize(new Dimension(width / 2, sizeSpinner.getPreferredSize().height));
+        lineSizeSpinner.setPreferredSize(new Dimension(width / 2, lineSizeSpinner.getPreferredSize().height));
+        chkDrawLine.setPreferredSize(new Dimension(width / 2, chkDrawLine.getPreferredSize().height));
+        chkDrawNumber.setPreferredSize(new Dimension(width / 2, chkDrawNumber.getPreferredSize().height));
+
         this.setPreferredSize(new Dimension(width, getPreferredSize().height));
+    }
+
+    private void initInitialValues() {
+        adjustedGraph = (GraphToDraw) comboModel.getSelectedItem();
+        graphPointsView.setSelectedIndex(adjustedGraph.getType());
+        colorButton.setForeground(adjustedGraph.getColor());
+        sizeSpinner.setValue(adjustedGraph.getSize());
+        lineSizeSpinner.setValue(adjustedGraph.getLineSize());
+        chkDrawLine.setSelected(adjustedGraph.isLines());
+        chkDrawNumber.setSelected(adjustedGraph.isNumbers());
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        adjustedGraph = (GraphToDraw) comboModel.getSelectedItem();
+        JComponent component = (JComponent) e.getSource();
+        if (component.getName() == Names.DATA.name()) {
+            initInitialValues();
+        } else if (component.getName() == Names.POINTVIEW.name()) {
+            adjustedGraph.setType(graphPointsView.getSelectedIndex());
+        } else if (component.getName() == Names.COLOR.name()) {
+            Color initialColor = adjustedGraph.getColor();
+            Color choosenColor = JColorChooser.showDialog(null, "Change Color of " + adjustedGraph.getName(),
+                    initialColor);
+            if (choosenColor != null) {
+                adjustedGraph.setColor(choosenColor);
+            }
+        }
+        menu.getView().repaint();
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        adjustedGraph = (GraphToDraw) comboModel.getSelectedItem();
+        JComponent component = (JComponent) e.getSource();
+        if (component.getName() == Names.SIZE.name()) {
+            adjustedGraph.setSize((Integer) sizeSpinner.getValue());
+        } else if (component.getName() == Names.LINESIZE.name()) {
+            adjustedGraph.setLineSize((Integer) lineSizeSpinner.getValue());
+        }
+        menu.getView().repaint();
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        adjustedGraph = (GraphToDraw) comboModel.getSelectedItem();
+        JComponent component = (JComponent) e.getSource();
+        if (component.getName() == Names.DRAWLINE.name()) {
+            adjustedGraph.setLines(e.getStateChange() == ItemEvent.SELECTED);
+        } else if (component.getName() == Names.DRAWNUMBER.name()) {
+            adjustedGraph.setNumbers(e.getStateChange() == ItemEvent.SELECTED);
+        }
+        menu.getView().repaint();
     }
 
 }

@@ -3,6 +3,9 @@ package diagramvisualizer.controller;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -14,21 +17,24 @@ import javax.swing.event.ChangeListener;
  *
  * @author szlavik.mi
  */
-public class MinMaxControlPanel extends JPanel implements ChangeListener {
+public class MinMaxControlPanel extends JPanel implements ChangeListener, ItemListener {
 
     private Menu menu;
     private JLabel mainLabel = new JLabel("Adjust Axis values:");
-    private JLabel[] labels = new JLabel[6];
+    private JLabel[] labels ;
     private JSpinner[] spinners = new JSpinner[6];
-    private String[] labelNames = {"X min.:","X max.:","X raster:","Y min.:","Y max.:","Y raster:"};
-    
+    private JCheckBox chkRaster;
+    private String[] labelNames = {"X min.:", "X max.:", "X raster:", "Y min.:", "Y max.:", "Y raster:", "Draw raster:"};
+
     public MinMaxControlPanel(Menu menu, int width) {
         this.menu = menu;
+        this.labels = new JLabel[labelNames.length];
+        
         this.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        for (int i = 0; i < labels.length; i++) {
+        for (int i = 0; i < spinners.length; i++) {
             labels[i] = new JLabel(labelNames[i]);
             spinners[i] = new JSpinner(new SpinnerNumberModel(getActualValue(i), -10E10, 10E10, 10E-3));
             spinners[i].addChangeListener(this);
@@ -38,24 +44,37 @@ public class MinMaxControlPanel extends JPanel implements ChangeListener {
         c.gridwidth = 10;
         c.gridheight = 1;
         add(mainLabel, c);
-        for (int i = 0; i < labels.length; i++) {
+        int i;
+        for (i = 0; i < spinners.length; i++) {
             c.gridx = 0;
             c.gridy = i + 1;
             c.gridwidth = 4;
             add(labels[i], c);
             c.gridx = 4;
-            c.gridy = i + 1;
             c.gridwidth = 6;
             add(spinners[i], c);
         }
+        c.gridy = i + 1;
+        c.gridx = 0;
+        c.gridwidth = 4;
+        labels[i] = new JLabel(labelNames[i]);
+        add(labels[i], c);
+        c.gridx = 4;
+        c.gridwidth = 4;
+        chkRaster = new JCheckBox("", true);
+        chkRaster.addItemListener(this);
+        add(chkRaster,c);
         setWidth(width);
     }
 
     private void setWidth(int width) {
-        for (int i = 0; i < labels.length; i++) {
+        int i;
+        for (i = 0; i < spinners.length; i++) {
             labels[i].setPreferredSize(new Dimension(width / 2, labels[i].getPreferredSize().height));
             spinners[i].setPreferredSize(new Dimension(width / 2, spinners[i].getPreferredSize().height));
         }
+        labels[i].setPreferredSize(new Dimension(width / 2, labels[i].getPreferredSize().height));
+        chkRaster.setPreferredSize(new Dimension(width / 2, chkRaster.getPreferredSize().height));
         this.setPreferredSize(new Dimension(width, getPreferredSize().height));
     }
 
@@ -84,6 +103,7 @@ public class MinMaxControlPanel extends JPanel implements ChangeListener {
         }
         return value;
     }
+
     @Override
     public void stateChanged(ChangeEvent ce) {
         menu.getView().setMinX((double) spinners[0].getValue());
@@ -92,6 +112,11 @@ public class MinMaxControlPanel extends JPanel implements ChangeListener {
         menu.getView().setMinY((double) spinners[3].getValue());
         menu.getView().setMaxY((double) spinners[4].getValue());
         menu.getView().setRasterY((double) spinners[5].getValue());
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        menu.getView().setDrawRaster(e.getStateChange() == ItemEvent.SELECTED);
     }
 
 }

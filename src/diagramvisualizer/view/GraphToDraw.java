@@ -12,6 +12,7 @@ public class GraphToDraw {
     private DotSeries graf;
     private Color color;
     private boolean lines;
+    private boolean numbers;
     private int type;
     private int size;
     private int lineSize;
@@ -25,10 +26,19 @@ public class GraphToDraw {
         this.type = type;
         this.size = size;
         this.lineSize = lineSize;
+        this.numbers = false;
     }
 
     public DotSeries getGraf() {
         return graf;
+    }
+
+    public boolean isNumbers() {
+        return numbers;
+    }
+
+    public void setNumbers(boolean numbers) {
+        this.numbers = numbers;
     }
 
     public String getName() {
@@ -38,7 +48,7 @@ public class GraphToDraw {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public Color getColor() {
         return color;
     }
@@ -82,5 +92,5 @@ public class GraphToDraw {
     @Override
     public String toString() {
         return name;
-    }    
+    }
 }
