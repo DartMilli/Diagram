@@ -117,16 +117,20 @@ public class DotSeries {
 
     public DotSeries getSorted() {
         DotSeries out = new DotSeries(this.getPointX(), this.getPointY());
-        for (int i = out.getPiecesOfPoints() - 1; i > 0; i--) {
+        out.sortMe();
+        return out;
+    }
+    
+    public void sortMe(){
+        for (int i = getPiecesOfPoints() - 1; i > 0; i--) {
             for (int j = 0; j < i; j++) {
-                if (out.getPointX(j) > out.getPointX(j + 1)) {
-                    double tmpX = out.getPointX(j);
-                    double tmpY = out.getPointY(j);
-                    out.setPoint(j, out.getPointX(j + 1), out.getPointY(j + 1));
-                    out.setPoint(j + 1, tmpX, tmpY);
+                if (getPointX(j) > getPointX(j + 1)) {
+                    double tmpX = getPointX(j);
+                    double tmpY = getPointY(j);
+                    setPoint(j, getPointX(j + 1), getPointY(j + 1));
+                    setPoint(j + 1, tmpX, tmpY);
                 }
             }
         }
-        return out;
     }
 }
