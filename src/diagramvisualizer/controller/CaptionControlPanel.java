@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 public class CaptionControlPanel extends JPanel implements ActionListener {
 
     private Menu menu;
-    private JLabel mainLabel = new JLabel("Adjust Axes Caption:");
     private JLabel[] labels = new JLabel[4];
     private JComboBox[] combos = new JComboBox[4];
     private String[] labelNames = {"X plus:", "X minus:", "Y plus:", "Y minus:"};
@@ -36,18 +35,16 @@ public class CaptionControlPanel extends JPanel implements ActionListener {
         c.gridy = 0;
         c.gridwidth = 10;
         c.gridheight = 1;
-        add(mainLabel, c);
         for (int i = 0; i < labels.length; i++) {
             c.gridx = 0;
-            c.gridy = i + 1;
+            c.gridy = i;
             c.gridwidth = 4;
             add(labels[i], c);
             c.gridx = 4;
-            c.gridy = i + 1;
             c.gridwidth = 6;
             add(combos[i], c);
         }
-        setWitdth(width);
+        setWitdth(width - 12);
     }
 
     private void setWitdth(int width) {

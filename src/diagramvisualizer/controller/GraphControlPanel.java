@@ -49,9 +49,8 @@ public class GraphControlPanel extends JPanel
     private DefaultComboBoxModel comboModel;
     private JCheckBox chkDrawLine;
     private JCheckBox chkDrawNumber;
-    private JLabel mainLabel = new JLabel("Adjust Graphs:");
     private JLabel[] labels;
-    private String[] labelNames = {"Selected:", "Marker:", "Color:", "Size:", "Draw Line:", "Line size:", "Draw Num.:"};
+    private String[] labelNames = {"Selected:", "Marker:", "Color:", "Draw Line:", "Draw Num.:", "Marker size:", "Line size:"};
     private JScrollPane pointsTableScroll;
     private JTable pointsTable;
 
@@ -80,17 +79,16 @@ public class GraphControlPanel extends JPanel
         c.gridy = 0;
         c.gridwidth = 10;
         c.gridheight = 1;
-        add(mainLabel, c);
 
         for (int i = 0; i < labels.length; i++) {
             labels[i] = new JLabel(labelNames[i]);
-            c.gridy = i + 1;
+            c.gridy = i;
             c.gridwidth = 4;
             add(labels[i], c);
         }
 
         c.gridx = 4;
-        c.gridy = 1;
+        c.gridy = 0;
         c.gridwidth = 6;
         comboModel = new DefaultComboBoxModel<GraphToDraw>(menu.getView().getGraphs());
         graphs = new JComboBox(comboModel);
@@ -99,30 +97,36 @@ public class GraphControlPanel extends JPanel
         graphs.setName(Names.DATA.name());
         add(graphs, c);
 
-        c.gridy = 2;
+        c.gridy = 1;
         String[] tmp = {"none", "O", "X", "+"};
         graphPointsView = new JComboBox(tmp);
         graphPointsView.addActionListener(this);
         graphPointsView.setName(Names.POINTVIEW.name());
         add(graphPointsView, c);
 
-        c.gridy = 3;
+        c.gridy = 2;
         colorButton = new JButton("Change");
         colorButton.addActionListener(this);
         colorButton.setName(Names.COLOR.name());
         add(colorButton, c);
 
-        c.gridy = 4;
-        sizeSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 15, 1));
-        sizeSpinner.addChangeListener(this);
-        sizeSpinner.setName(Names.SIZE.name());
-        add(sizeSpinner, c);
-
-        c.gridy = 5;
+        c.gridy = 3;
         chkDrawLine = new JCheckBox("", false);
         chkDrawLine.addItemListener(this);
         chkDrawLine.setName(Names.DRAWLINE.name());
         add(chkDrawLine, c);
+
+        c.gridy = 4;
+        chkDrawNumber = new JCheckBox("", false);
+        chkDrawNumber.addItemListener(this);
+        chkDrawNumber.setName(Names.DRAWNUMBER.name());
+        add(chkDrawNumber, c);
+
+        c.gridy = 5;
+        sizeSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 15, 1));
+        sizeSpinner.addChangeListener(this);
+        sizeSpinner.setName(Names.SIZE.name());
+        add(sizeSpinner, c);
 
         c.gridy = 6;
         lineSizeSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 15, 1));
@@ -130,32 +134,24 @@ public class GraphControlPanel extends JPanel
         lineSizeSpinner.setName(Names.LINESIZE.name());
         add(lineSizeSpinner, c);
 
-        c.gridy = 7;
-        chkDrawNumber = new JCheckBox("", false);
-        chkDrawNumber.addItemListener(this);
-        chkDrawNumber.setName(Names.DRAWNUMBER.name());
-        add(chkDrawNumber, c);
-
         c.gridx = 0;
-        c.gridy = 8;
+        c.gridy = 7;
         c.gridwidth = 10;
-        //c.gridheight = 2;
         pointsTable = new JTable(new DataPointTableModel(adjustedGraph));
         pointsTable.addPropertyChangeListener(this);
         pointsTable.setName(Names.TABLE.name());
         pointsTableScroll = new JScrollPane(pointsTable);
-        //pointsTableScroll.add(addRowButton);
         pointsTableScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         add(pointsTableScroll, c);
 
-        c.gridy = 9;
+        c.gridy = 8;
         addRowButton = new JButton("Add row...");
         addRowButton.setName(Names.ADDBUTTON.name());
         addRowButton.addActionListener(this);
-        add(addRowButton,c);
+        add(addRowButton, c);
 
         initInitialValues();
-        setWidth(width);
+        setWidth(width - 12);
     }
 
     private void setWidth(int width) {
@@ -201,8 +197,8 @@ public class GraphControlPanel extends JPanel
                 adjustedGraph.setColor(choosenColor);
                 colorButton.setForeground(choosenColor);
             }
-        }else if (component.getName() == Names.ADDBUTTON.name()) {
-            ((DataPointTableModel)pointsTable.getModel()).addRow();
+        } else if (component.getName() == Names.ADDBUTTON.name()) {
+            ((DataPointTableModel) pointsTable.getModel()).addRow();
         }
         menu.getView().repaint();
     }

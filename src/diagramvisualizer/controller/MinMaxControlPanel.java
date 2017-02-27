@@ -20,8 +20,7 @@ import javax.swing.event.ChangeListener;
 public class MinMaxControlPanel extends JPanel implements ChangeListener, ItemListener {
 
     private Menu menu;
-    private JLabel mainLabel = new JLabel("Adjust Axis values:");
-    private JLabel[] labels ;
+    private JLabel[] labels;
     private JSpinner[] spinners = new JSpinner[6];
     private JCheckBox chkRaster;
     private String[] labelNames = {"X min.:", "X max.:", "X raster:", "Y min.:", "Y max.:", "Y raster:", "Draw raster:"};
@@ -29,7 +28,7 @@ public class MinMaxControlPanel extends JPanel implements ChangeListener, ItemLi
     public MinMaxControlPanel(Menu menu, int width) {
         this.menu = menu;
         this.labels = new JLabel[labelNames.length];
-        
+
         this.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -43,18 +42,17 @@ public class MinMaxControlPanel extends JPanel implements ChangeListener, ItemLi
         c.gridy = 0;
         c.gridwidth = 10;
         c.gridheight = 1;
-        add(mainLabel, c);
         int i;
         for (i = 0; i < spinners.length; i++) {
             c.gridx = 0;
-            c.gridy = i + 1;
+            c.gridy = i;
             c.gridwidth = 4;
             add(labels[i], c);
             c.gridx = 4;
             c.gridwidth = 6;
             add(spinners[i], c);
         }
-        c.gridy = i + 1;
+        c.gridy = i;
         c.gridx = 0;
         c.gridwidth = 4;
         labels[i] = new JLabel(labelNames[i]);
@@ -63,8 +61,8 @@ public class MinMaxControlPanel extends JPanel implements ChangeListener, ItemLi
         c.gridwidth = 4;
         chkRaster = new JCheckBox("", true);
         chkRaster.addItemListener(this);
-        add(chkRaster,c);
-        setWidth(width);
+        add(chkRaster, c);
+        setWidth(width - 12);
     }
 
     private void setWidth(int width) {
