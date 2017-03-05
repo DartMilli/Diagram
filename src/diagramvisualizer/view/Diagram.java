@@ -41,7 +41,7 @@ public class Diagram extends JPanel {
         graphs = new ArrayList<>();
 
         double[] xPoints, yPoints;
-        if (true) {
+        if (false) {
             xPoints = new double[]{1, 2, 3, 4, 5};
             yPoints = new double[]{2, 3, 2, 0.5, 1.5};
         } else {

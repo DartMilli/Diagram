@@ -3,8 +3,11 @@ package diagramvisualizer.controller;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,13 +20,14 @@ import javax.swing.event.ChangeListener;
  *
  * @author szlavik.mi
  */
-public class MinMaxControlPanel extends JPanel implements ChangeListener, ItemListener {
+public class MinMaxControlPanel extends JPanel implements ChangeListener, ItemListener, ActionListener {
 
     private Menu menu;
     private JLabel[] labels;
     private JSpinner[] spinners = new JSpinner[6];
+    private JButton autoRaster;
     private JCheckBox chkRaster;
-    private String[] labelNames = {"X min.:", "X max.:", "X raster:", "Y min.:", "Y max.:", "Y raster:", "Draw raster:"};
+    private String[] labelNames = {"X min.:", "X max.:", "X raster:", "Y min.:", "Y max.:", "Y raster:", "Auto values:", "Draw raster:"};
 
     public MinMaxControlPanel(Menu menu, int width) {
         this.menu = menu;
@@ -37,6 +41,7 @@ public class MinMaxControlPanel extends JPanel implements ChangeListener, ItemLi
             labels[i] = new JLabel(labelNames[i]);
             spinners[i] = new JSpinner(new SpinnerNumberModel(getActualValue(i), -10E10, 10E10, 10E-3));
             spinners[i].addChangeListener(this);
+            spinners[i].setName(Integer.toString(i));
         }
         c.gridx = 0;
         c.gridy = 0;
@@ -57,11 +62,25 @@ public class MinMaxControlPanel extends JPanel implements ChangeListener, ItemLi
         c.gridwidth = 4;
         labels[i] = new JLabel(labelNames[i]);
         add(labels[i], c);
+
+        c.gridx = 4;
+        c.gridwidth = 4;
+        autoRaster = new JButton("Auto");
+        autoRaster.addActionListener(this);
+        add(autoRaster, c);
+        i++;
+
+        c.gridy = i;
+        c.gridx = 0;
+        c.gridwidth = 4;
+        labels[i] = new JLabel(labelNames[i]);
+        add(labels[i], c);
         c.gridx = 4;
         c.gridwidth = 4;
         chkRaster = new JCheckBox("", true);
         chkRaster.addItemListener(this);
         add(chkRaster, c);
+
         setWidth(width - 12);
     }
 
@@ -72,6 +91,8 @@ public class MinMaxControlPanel extends JPanel implements ChangeListener, ItemLi
             spinners[i].setPreferredSize(new Dimension(width / 2, spinners[i].getPreferredSize().height));
         }
         labels[i].setPreferredSize(new Dimension(width / 2, labels[i].getPreferredSize().height));
+        labels[i + 1].setPreferredSize(new Dimension(width / 2, labels[i + 1].getPreferredSize().height));
+        autoRaster.setPreferredSize(new Dimension(width / 2, autoRaster.getPreferredSize().height));
         chkRaster.setPreferredSize(new Dimension(width / 2, chkRaster.getPreferredSize().height));
         this.setPreferredSize(new Dimension(width, getPreferredSize().height));
     }
@@ -97,24 +118,46 @@ public class MinMaxControlPanel extends JPanel implements ChangeListener, ItemLi
             case 5:
                 value = menu.getView().getRasterY();
                 break;
-
         }
         return value;
     }
 
     @Override
     public void stateChanged(ChangeEvent ce) {
-        menu.getView().setMinX((double) spinners[0].getValue());
-        menu.getView().setMaxX((double) spinners[1].getValue());
-        menu.getView().setRasterX((double) spinners[2].getValue());
-        menu.getView().setMinY((double) spinners[3].getValue());
-        menu.getView().setMaxY((double) spinners[4].getValue());
-        menu.getView().setRasterY((double) spinners[5].getValue());
+        JSpinner sp = (JSpinner) ce.getSource();
+        switch (sp.getName()) {
+            case "0":
+                menu.getView().setMinX((double) spinners[0].getValue());
+                break;
+            case "1":
+                menu.getView().setMaxX((double) spinners[1].getValue());
+                break;
+            case "2":
+                menu.getView().setRasterX((double) spinners[2].getValue());
+                break;
+            case "3":
+                menu.getView().setMinY((double) spinners[3].getValue());
+                break;
+            case "4":
+                menu.getView().setMaxY((double) spinners[4].getValue());
+                break;
+            case "5":
+                menu.getView().setRasterY((double) spinners[5].getValue());
+                break;
+        }
     }
 
     @Override
     public void itemStateChanged(ItemEvent e) {
         menu.getView().setDrawRaster(e.getStateChange() == ItemEvent.SELECTED);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        menu.getView().setAutoAxesUnits();
+        for (int i = 0; i < spinners.length; i++) {
+            spinners[i].getModel().setValue(getActualValue(i));
+        }
     }
 
 }

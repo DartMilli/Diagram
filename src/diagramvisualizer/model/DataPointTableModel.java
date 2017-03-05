@@ -25,23 +25,36 @@ public class DataPointTableModel extends AbstractTableModel {
         this.graph = graph;
         fireTableDataChanged();
     }
-    
-    public void addRow(){
-       addRow(new double[]{0.0,0.0});
+
+    public void addRow() {
+        addRow(new double[]{0.0, 0.0});
     }
-    
-    public void addRow(double[] point){
-        if (point.length==2) {
+
+    public void addRow(double[] point) {
+        if (point.length == 2) {
             graph.getGraf().addPoint(point[0], point[1]);
         }
         fireTableDataChanged();
     }
-    
-    public void addRow(double[][] points){    
+
+    public void addRow(double[][] points) {
         for (int i = 0; i < points.length; i++) {
-            addRow(points[i]);            
+            addRow(points[i]);
         }
-    } 
+    }
+
+    public void removeRow(int index) {
+        if (index < graph.getGraf().getPiecesOfPoints() && index >= 0) {
+            graph.getGraf().removePoint(index);
+        }
+        fireTableDataChanged();
+    }
+
+    public void removeRow(int[] indexes) {
+        for (int i = (indexes.length - 1); i >= 0; i--) {
+            removeRow(indexes[i]);
+        }
+    }
 
     @Override
     public String getColumnName(int column) {
