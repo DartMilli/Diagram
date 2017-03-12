@@ -27,8 +27,10 @@ public class Menu extends JPanel {
 
         panels[0] = new SpinPanel("Adjust Axis Values:", dmsn.width - 4);
         panels[0].add(controlMinAndMax);
+        panels[0].close();
         panels[1] = new SpinPanel("Adjust Axes Caption:", dmsn.width - 4);
         panels[1].add(captionControl);
+        panels[1].close();
         panels[2] = new SpinPanel("Adjust Graphs:", dmsn.width - 4);
         panels[2].add(graphcontrol);
         for (int i = 0; i < panels.length; i++) {

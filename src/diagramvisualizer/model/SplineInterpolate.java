@@ -20,7 +20,7 @@ public class SplineInterpolate {
         noOfInterpolatedPoints = noOfOriginalPoints * raster;
         coefficients = new double[noOfOriginalPoints - 1][4];
         isVisualizable = true;
-//        System.out.println("Spline");
+        System.out.println("Spline");
         interpolate();
         generateInterpolatedData();
     }
@@ -65,19 +65,19 @@ public class SplineInterpolate {
         m.setMatrix(noOfCoefficients - 1, (noOfFunctions - 1) * 4, 6 * data.getPointX(data.getPiecesOfPoints() - 1));
         m.setMatrix(noOfCoefficients - 1, (noOfFunctions - 1) * 4 + 1, 2);
 
-//        System.out.println("matrix:");
-//        m.getMatrixConsole();
-//        System.out.println("degauss matrix:");
+        System.out.println("matrix:");
+        m.getMatrixConsole();
+        System.out.println("degauss matrix:");
         gm = m.getFullGauss();
-//        gm.getMatrixConsole();
+        gm.getMatrixConsole();
         for (int i = 0; i < coefficients.length; i++) {
             for (int j = 0; j < 4; j++) {
                 coefficients[i][j] = gm.getMatrix(4 * i + j, noOfCoefficients);
             }
         }
-//        System.out.println("coeffs");
-//        Matrix c = new Matrix(coefficients);
-//        c.getMatrixConsole();
+        System.out.println("coeffs");
+        Matrix c = new Matrix(coefficients);
+        c.getMatrixConsole();
     }
 
     private void generateInterpolatedData() {
@@ -88,14 +88,14 @@ public class SplineInterpolate {
         min = data.getPointX(0);
         max = data.getPointX(noOfOriginalPoints - 1);
         step = (max - min) / noOfInterpolatedPoints;
-//        System.out.println("points");
+        System.out.println("points");
         for (int i = 0; i <= noOfInterpolatedPoints; i++) {
             x[i] = min + i * step;
             coeffIndex = whichIsTheActualFunction(x[i]);
             for (int j = 0; j < 4; j++) {
                 y[i] += coefficients[coeffIndex][3 - j] * Math.pow(x[i], j);
             }
-//            System.out.println(x[i] + "," + y[i]);
+            System.out.println(x[i] + "," + y[i]);
             if (x[i] > 10E16 || x[i] < -1 * 10E16 || y[i] > 10E16 || y[i] < -1 * 10E-16) {
                 isVisualizable = false;
             }

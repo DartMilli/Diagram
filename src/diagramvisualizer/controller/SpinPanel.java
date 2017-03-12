@@ -33,7 +33,7 @@ public class SpinPanel extends JPanel implements ActionListener {
         this.captionPanel = new JPanel(new BorderLayout());
         this.closed = false;
         this.width = width;
-        this.setLayout(new BorderLayout());       
+        this.setLayout(new BorderLayout());
 
         this.captionPanel.add(title, BorderLayout.WEST);
         this.captionPanel.add(spinner, BorderLayout.EAST);
@@ -49,6 +49,18 @@ public class SpinPanel extends JPanel implements ActionListener {
         captionPanel.setPreferredSize(new Dimension(width - 1, 2 * title.getFont().getSize()));
     }
 
+    public void close() {
+        container.setVisible(false);
+        closed = true;
+        spinner.setText(upAndDownArrow[1]);
+    }
+
+    public void open() {
+        container.setVisible(true);
+        closed = false;
+        spinner.setText(upAndDownArrow[0]);
+    }
+
     @Override
     public Component add(Component comp) {
         return container.add(comp);
@@ -57,13 +69,9 @@ public class SpinPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (closed) {
-            container.setVisible(true);
-            closed = false;
-            spinner.setText(upAndDownArrow[0]);
+            open();
         } else {
-            container.setVisible(false);
-            closed = true;
-            spinner.setText(upAndDownArrow[1]);
+            close();
         }
     }
 }

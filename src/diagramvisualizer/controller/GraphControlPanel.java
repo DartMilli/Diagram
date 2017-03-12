@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -55,6 +56,7 @@ public class GraphControlPanel extends JPanel
     private JButton colorButton;
     private JButton addRowButton;
     private JButton removeRowButton;
+    private JButton removeDataButton;
     private JButton addNewButton;
     private JButton addRegressionButton;
     private JButton addLagrangeButton;
@@ -63,7 +65,10 @@ public class GraphControlPanel extends JPanel
     private JCheckBox chkDrawLine;
     private JCheckBox chkDrawNumber;
     private JLabel[] labels;
-    private String[] labelNames = {"Selected:", "Marker:", "Color:", "Draw Line:", "Draw Num.:", "Marker size:", "Line size:"};
+    private JLabel[] labels2;
+    private JTextField nameOfNewData;
+    private String[] labelNames = {"Selected:", "Marker:", "Color:", "Draw:", "Marker size:", "Line size:"};
+    private String[] labelNames2 = {"Add new:", "Remove:", "Add:"};
     private JScrollPane pointsTableScroll;
     private JTable pointsTable;
     private JPanel addPanel;
@@ -78,8 +83,9 @@ public class GraphControlPanel extends JPanel
         DRAWLINE,
         DRAWNUMBER,
         TABLE,
-        ADDBUTTON,
-        REMOVEBUTTON,
+        ADDPOINT,
+        REMOVEPOINT,
+        REMOVEDATA,
         ADDNEW,
         ADDREGRESSION,
         ADDLAGRANGE,
@@ -89,6 +95,7 @@ public class GraphControlPanel extends JPanel
     public GraphControlPanel(Menu menu, int width) {
         this.menu = menu;
         this.labels = new JLabel[labelNames.length];
+        this.labels2 = new JLabel[labelNames2.length];
 
         this.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -130,31 +137,38 @@ public class GraphControlPanel extends JPanel
         add(colorButton, c);
 
         c.gridy = 3;
-        chkDrawLine = new JCheckBox("", false);
+        c.gridwidth = 3;
+        chkDrawLine = new JCheckBox("Line", false);
         chkDrawLine.addItemListener(this);
         chkDrawLine.setName(Names.DRAWLINE.name());
+        chkDrawLine.setMargin(new Insets(0, 0, 0, 0));
         add(chkDrawLine, c);
 
-        c.gridy = 4;
-        chkDrawNumber = new JCheckBox("", false);
+        c.gridy = 3;
+        c.gridx = 7;
+        c.gridwidth = 3;
+        chkDrawNumber = new JCheckBox("No.", false);
         chkDrawNumber.addItemListener(this);
         chkDrawNumber.setName(Names.DRAWNUMBER.name());
+        chkDrawNumber.setMargin(new Insets(0, 0, 0, 0));
         add(chkDrawNumber, c);
 
-        c.gridy = 5;
+        c.gridy = 4;
+        c.gridx = 4;
+        c.gridwidth = 6;
         sizeSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 15, 1));
         sizeSpinner.addChangeListener(this);
         sizeSpinner.setName(Names.SIZE.name());
         add(sizeSpinner, c);
 
-        c.gridy = 6;
+        c.gridy = 5;
         lineSizeSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 15, 1));
         lineSizeSpinner.addChangeListener(this);
         lineSizeSpinner.setName(Names.LINESIZE.name());
         add(lineSizeSpinner, c);
 
         c.gridx = 0;
-        c.gridy = 7;
+        c.gridy = 6;
         c.gridwidth = 10;
         pointsTable = new JTable(new DataPointTableModel(adjustedGraph));
         pointsTable.addPropertyChangeListener(this);
@@ -164,12 +178,12 @@ public class GraphControlPanel extends JPanel
         add(pointsTableScroll, c);
 
         c.gridx = 0;
-        c.gridy = 8;
+        c.gridy = 7;
         spAddX = new JSpinner(new SpinnerNumberModel(0.0, -10E10, 10E10, 10E-3));
         spAddY = new JSpinner(new SpinnerNumberModel(0.0, -10E10, 10E10, 10E-3));
         addRowButton = new JButton("+");
         addRowButton.setMargin(new Insets(0, 0, 0, 0));
-        addRowButton.setName(Names.ADDBUTTON.name());
+        addRowButton.setName(Names.ADDPOINT.name());
         addRowButton.addActionListener(this);
         addPanel = new JPanel(new BorderLayout());
         addPanel.add(spAddX, BorderLayout.WEST);
@@ -177,40 +191,61 @@ public class GraphControlPanel extends JPanel
         addPanel.add(addRowButton, BorderLayout.EAST);
         add(addPanel, c);
 
-        c.gridx = 0;
-        c.gridy = 9;
-        removeRowButton = new JButton("Remove selected point");
-        removeRowButton.setName(Names.REMOVEBUTTON.name());
+        for (int i = 0; i < labels2.length; i++) {
+            labels2[i] = new JLabel(labelNames2[i]);
+            c.gridy = i + 8;
+            c.gridwidth = 4;
+            add(labels2[i], c);
+        }
+
+        c.gridx = 4;
+        c.gridy = 8;
+        c.gridwidth = 6;
+        addNewButton = new JButton();
+        nameOfNewData = new JTextField("New...");
+        addNewButton.setName(Names.ADDNEW.name());
+        addNewButton.addActionListener(this);
+        addNewButton.add(nameOfNewData);
+        add(addNewButton, c);
+
+        c.gridx = 4;
+        c.gridy = 9; 
+        c.gridwidth = 3;
+        removeRowButton = new JButton("Point");
+        removeRowButton.setName(Names.REMOVEPOINT.name());
         removeRowButton.addActionListener(this);
+        removeRowButton.setMargin(new Insets(0, 0, 0, 0));
         add(removeRowButton, c);
-//
-//        c.gridx = 0;
-//        c.gridy = 10;
-//        addNewButton = new JButton("Add new...");
-//        addNewButton.setName(Names.ADDNEW.name());
-//        addNewButton.addActionListener(this);
-//        add(addNewButton, c);
-//
-//        c.gridx = 0;
-//        c.gridy = 11;
-//        addRegressionButton = new JButton("Add Regression");
-//        addRegressionButton.setName(Names.ADDREGRESSION.name());
-//        addRegressionButton.addActionListener(this);
-//        add(addRegressionButton, c);
-//
-//        c.gridx = 0;
-//        c.gridy = 12;
-//        addLagrangeButton = new JButton("Add Lagrange");
-//        addLagrangeButton.setName(Names.ADDLAGRANGE.name());
-//        addLagrangeButton.addActionListener(this);
-//        add(addLagrangeButton, c);
-//
-//        c.gridx = 0;
-//        c.gridy = 13;
-//        addSplineButton = new JButton("Add Spline");
-//        addSplineButton.setName(Names.ADDSPLINE.name());
-//        addSplineButton.addActionListener(this);
-//        add(addSplineButton, c);
+
+        c.gridx = 7;
+        removeDataButton = new JButton("Data");
+        removeDataButton.setName(Names.REMOVEDATA.name());
+        removeDataButton.addActionListener(this);
+        removeDataButton.setMargin(new Insets(0, 0, 0, 0));
+        add(removeDataButton, c);
+
+        c.gridx = 4;
+        c.gridy = 10;
+        c.gridwidth = 6;
+        addRegressionButton = new JButton("Regression");
+        addRegressionButton.setName(Names.ADDREGRESSION.name());
+        addRegressionButton.addActionListener(this);
+        addRegressionButton.setMargin(new Insets(0, 0, 0, 0));
+        add(addRegressionButton, c);
+
+        c.gridy = 11;
+        addLagrangeButton = new JButton("Lagrange");
+        addLagrangeButton.setName(Names.ADDLAGRANGE.name());
+        addLagrangeButton.addActionListener(this);
+        addLagrangeButton.setMargin(new Insets(0, 0, 0, 0));
+        add(addLagrangeButton, c);
+
+        c.gridy = 12;
+        addSplineButton = new JButton("Spline");
+        addSplineButton.setName(Names.ADDSPLINE.name());
+        addSplineButton.addActionListener(this);
+        addSplineButton.setMargin(new Insets(0, 0, 0, 0));
+        add(addSplineButton, c);
 
         initInitialValues();
         setWidth(width - 12);
@@ -225,39 +260,35 @@ public class GraphControlPanel extends JPanel
         colorButton.setPreferredSize(new Dimension(width / 2, colorButton.getPreferredSize().height));
         sizeSpinner.setPreferredSize(new Dimension(width / 2, sizeSpinner.getPreferredSize().height));
         lineSizeSpinner.setPreferredSize(new Dimension(width / 2, lineSizeSpinner.getPreferredSize().height));
-        chkDrawLine.setPreferredSize(new Dimension(width / 2, chkDrawLine.getPreferredSize().height));
-        chkDrawNumber.setPreferredSize(new Dimension(width / 2, chkDrawNumber.getPreferredSize().height));
+        chkDrawLine.setPreferredSize(new Dimension(width / 4, chkDrawLine.getPreferredSize().height));
+        chkDrawNumber.setPreferredSize(new Dimension(width / 4, chkDrawNumber.getPreferredSize().height));
         pointsTableScroll.setPreferredSize(new Dimension(width, 7 * pointsTable.getRowHeight()));
         int addButtonWith = 17;
         addRowButton.setPreferredSize(new Dimension(addButtonWith, addRowButton.getPreferredSize().height));
         spAddX.setPreferredSize(new Dimension((width - addButtonWith) / 2, spAddX.getPreferredSize().height));
         spAddY.setPreferredSize(new Dimension((width - addButtonWith) / 2, spAddY.getPreferredSize().height));
-        //addPanel.setPreferredSize(new Dimension(width, addPanel.getPreferredSize().height));
-        removeRowButton.setPreferredSize(new Dimension(width, removeRowButton.getPreferredSize().height));
-//        addNewButton.setPreferredSize(new Dimension(width, addNewButton.getPreferredSize().height));
-//        addRegressionButton.setPreferredSize(new Dimension(width, addRegressionButton.getPreferredSize().height));
-//        addLagrangeButton.setPreferredSize(new Dimension(width, addLagrangeButton.getPreferredSize().height));
-//        addSplineButton.setPreferredSize(new Dimension(width, addSplineButton.getPreferredSize().height));
+        addNewButton.setPreferredSize(new Dimension(width / 2, addNewButton.getPreferredSize().height));
+        nameOfNewData.setPreferredSize(new Dimension(addNewButton.getWidth() / 2, nameOfNewData.getPreferredSize().height));
+        removeRowButton.setPreferredSize(new Dimension(width / 4, removeRowButton.getPreferredSize().height));
+        removeDataButton.setPreferredSize(new Dimension(width / 4, removeDataButton.getPreferredSize().height));
+        addRegressionButton.setPreferredSize(new Dimension(width / 2, addRegressionButton.getPreferredSize().height));
+        addLagrangeButton.setPreferredSize(new Dimension(width / 2, addLagrangeButton.getPreferredSize().height));
+        addSplineButton.setPreferredSize(new Dimension(width / 2, addSplineButton.getPreferredSize().height));
+
         this.setPreferredSize(new Dimension(width, getPreferredSize().height));
     }
 
     private void initInitialValues() {
         adjustedGraph = (GraphToDraw) comboModel.getSelectedItem();
-        graphPointsView.setSelectedIndex(adjustedGraph.getType());
-        colorButton.setForeground(adjustedGraph.getColor());
-        sizeSpinner.setValue(adjustedGraph.getSize());
-        lineSizeSpinner.setValue(adjustedGraph.getLineSize());
-        chkDrawLine.setSelected(adjustedGraph.isLines());
-        chkDrawNumber.setSelected(adjustedGraph.isNumbers());
-        ((DataPointTableModel) pointsTable.getModel()).setGraph(adjustedGraph);
-    }
-
-    private void refreshCombobox() {
-        comboModel.removeAllElements();
-        for (int i = 0; i < menu.getView().getGraphs().length; i++) {
-            comboModel.addElement(menu.getView().getGraphs()[i]);
+        if (adjustedGraph != null) {
+            graphPointsView.setSelectedIndex(adjustedGraph.getType());
+            colorButton.setForeground(adjustedGraph.getColor());
+            sizeSpinner.setValue(adjustedGraph.getSize());
+            lineSizeSpinner.setValue(adjustedGraph.getLineSize());
+            chkDrawLine.setSelected(adjustedGraph.isLines());
+            chkDrawNumber.setSelected(adjustedGraph.isNumbers());
+            ((DataPointTableModel) pointsTable.getModel()).setGraph(adjustedGraph);
         }
-        graphs.setModel(comboModel);
     }
 
     @Override
@@ -276,31 +307,40 @@ public class GraphControlPanel extends JPanel
                 adjustedGraph.setColor(choosenColor);
                 colorButton.setForeground(choosenColor);
             }
-        } else if (component.getName() == Names.ADDBUTTON.name()) {
+        } else if (component.getName() == Names.ADDPOINT.name()) {
             double[] p = new double[2];
             p[0] = (double) spAddX.getValue();
             p[1] = (double) spAddY.getValue();
             ((DataPointTableModel) pointsTable.getModel()).addRow(p);
-        } else if (component.getName() == Names.REMOVEBUTTON.name()) {
-            ((DataPointTableModel) pointsTable.getModel()).removeRow(pointsTable.getSelectedRows());
         } else if (component.getName() == Names.ADDNEW.name()) {
-            menu.getView().addGraph(new GraphToDraw(new DotSeries(), "New", Color.yellow, true, 0, 0, 0));
-            refreshCombobox();
-        } else if (component.getName() == Names.ADDLAGRANGE.name()) {
+            double[] tmp = {0};
+            adjustedGraph = new GraphToDraw(new DotSeries(tmp, tmp), nameOfNewData.getText(), Color.yellow, true, 0, 0, 0);
+            nameOfNewData.setText("New...");
+            menu.getView().addGraph(adjustedGraph);
+            comboModel.addElement(adjustedGraph);
+        } else if (component.getName() == Names.REMOVEDATA.name()) {
+            menu.getView().removeGraph(adjustedGraph);
+            comboModel.removeElement(adjustedGraph);
+        } else if (component.getName() == Names.REMOVEPOINT.name()) {
+            ((DataPointTableModel) pointsTable.getModel()).removeRow(pointsTable.getSelectedRows());
+        } else if (component.getName() == Names.ADDREGRESSION.name()) {
             Regression regression = new Regression(adjustedGraph.getGraf());
             DotSeries trend = regression.getRegressionStraight();
-            menu.getView().addGraph(new GraphToDraw(trend, adjustedGraph.getName() + "_reg", Color.BLACK, true, 0, 0, 0));
-            refreshCombobox();
+            adjustedGraph = new GraphToDraw(trend, adjustedGraph.getName() + "_reg", Color.BLACK, true, 0, 0, 0);
+            menu.getView().addGraph(adjustedGraph);
+            comboModel.addElement(adjustedGraph);
         } else if (component.getName() == Names.ADDLAGRANGE.name()) {
             LagrangeInterpolate li = new LagrangeInterpolate(adjustedGraph.getGraf());
             DotSeries lagrangeInterpoltedData = li.getInterpolatedData();
-            menu.getView().addGraph(new GraphToDraw(lagrangeInterpoltedData, adjustedGraph.getName() + "_lag", Color.BLACK, true, 0, 0, 0));
-            refreshCombobox();
+            adjustedGraph = new GraphToDraw(lagrangeInterpoltedData, adjustedGraph.getName() + "_lag", Color.BLACK, true, 0, 0, 0);
+            menu.getView().addGraph(adjustedGraph);
+            comboModel.addElement(adjustedGraph);
         } else if (component.getName() == Names.ADDSPLINE.name()) {
             SplineInterpolate si = new SplineInterpolate(adjustedGraph.getGraf());
             DotSeries splineInterpoltedData = si.getInterpolatedData();
-            menu.getView().addGraph(new GraphToDraw(splineInterpoltedData, adjustedGraph.getName() + "_spl", Color.BLACK, true, 0, 0, 0));
-            refreshCombobox();
+            adjustedGraph = new GraphToDraw(splineInterpoltedData, adjustedGraph.getName() + "_spl", Color.BLACK, true, 0, 0, 0);
+            menu.getView().addGraph(adjustedGraph);
+            comboModel.addElement(adjustedGraph);
         }
         menu.getView().repaint();
     }

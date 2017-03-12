@@ -40,31 +40,28 @@ public class Diagram extends JPanel {
         calculateZerus();
         graphs = new ArrayList<>();
 
+        int dataType = 1;
         double[] xPoints, yPoints;
-        if (false) {
+        if (dataType == 1) {
             xPoints = new double[]{1, 2, 3, 4, 5};
             yPoints = new double[]{2, 3, 2, 0.5, 1.5};
         } else {
             xPoints = new double[]{111, 31, 55, 65, 14, 32, 105, 82, 130, 88, 28, 61, 65, 98};
             yPoints = new double[]{12.4, 5.2, 5.5, 7.6, 1.6, 4.3, 9, 7.8, 10.5, 9.8, 2, 3.7, 3.5, 7.6};
-        }
+        } 
         DotSeries data = new DotSeries(xPoints, yPoints);
-        Regression regression = new Regression(data);
-        DotSeries trend = regression.getRegressionStraight();
-        LagrangeInterpolate li = new LagrangeInterpolate(data);
-        SplineInterpolate si = new SplineInterpolate(data);
-        DotSeries lagrangeInterpoltedData = li.getInterpolatedData();
-        DotSeries splineInterpoltedData = si.getInterpolatedData();
 
-        addGraph(new GraphToDraw(data, "data", Color.red, false, 1, 4, 4));
-        addGraph(new GraphToDraw(trend, "trend", Color.BLACK, true, 0, 0, 2));
-        addGraph(new GraphToDraw(lagrangeInterpoltedData, "lagrange", Color.GREEN, true, 0, 0, 1));
-        addGraph(new GraphToDraw(splineInterpoltedData, "spline", Color.BLUE, true, 0, 0, 1));
+        addGraph(new GraphToDraw(data.getSorted(), "data", Color.red, false, 1, 4, 4));
 
         setAutoAxesUnits();
     }
 
     public void addGraph(GraphToDraw graf) {
+        for (int i = 0; i < graphs.size(); i++) {
+            if (graf.getName().equals(graphs.get(i).getName())) {
+                graf.setName(graf.getName()+"_2");
+            }            
+        }
         graphs.add(graf);
     }
 

@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
+import javax.swing.JSplitPane;
 
 /**
  *
@@ -31,7 +32,7 @@ public class DiagramVisualizer {
                 window.setLayout(null);
                 window.setResizable(false);
                 int margin = 10;
-                int menuWith = 180;
+                int menuWith = 200;
                 Dimension menuDmsn = new Dimension(menuWith, dmsn.height - 2 * margin - 28);
                 Dimension viewDmsn = new Dimension(dmsn.width - 2 * margin - 12 - menuDmsn.width, dmsn.height - 2 * margin - 28);
                 Rectangle viewRctl = new Rectangle(new Point(margin, margin), viewDmsn);
@@ -39,7 +40,7 @@ public class DiagramVisualizer {
                 Diagram veiw = new Diagram(viewDmsn);
                 Menu menu = new Menu(veiw, menuDmsn);
                 veiw.setBounds(viewRctl);
-                menu.setBounds(menuRctl);
+                menu.setBounds(menuRctl);           
                 window.add(veiw);
                 window.add(menu);
                 window.setVisible(true);
