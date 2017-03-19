@@ -170,9 +170,12 @@ public class GraphControlPanel extends JPanel
         c.gridx = 0;
         c.gridy = 6;
         c.gridwidth = 10;
-        pointsTable = new JTable(new DataPointTableModel(adjustedGraph));
+        DataPointTableModel pointModel = new DataPointTableModel(adjustedGraph);
+        pointsTable = new JTable(pointModel);
+        TableKeyListener keyListener = new TableKeyListener(pointsTable);
         pointsTable.addPropertyChangeListener(this);
         pointsTable.setName(Names.TABLE.name());
+        pointsTable.addKeyListener(keyListener);
         pointsTableScroll = new JScrollPane(pointsTable);
         pointsTableScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         add(pointsTableScroll, c);
@@ -209,7 +212,7 @@ public class GraphControlPanel extends JPanel
         add(addNewButton, c);
 
         c.gridx = 4;
-        c.gridy = 9; 
+        c.gridy = 9;
         c.gridwidth = 3;
         removeRowButton = new JButton("Point");
         removeRowButton.setName(Names.REMOVEPOINT.name());
