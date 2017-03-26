@@ -27,7 +27,7 @@ public class DiagramVisualizer {
                         GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().getSize()
                 );
                 window.setSize(new Dimension(dmsn));
-                window.setTitle("Diagram Visualizer 1.0.0");
+                window.setTitle("Diagram Visualizer 1.0.3");
                 window.setLayout(null);
                 window.setResizable(false);
                 int margin = 10;

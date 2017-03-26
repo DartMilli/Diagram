@@ -1,9 +1,6 @@
 package diagramvisualizer.view;
 
-import diagramvisualizer.model.Regression;
 import diagramvisualizer.model.DotSeries;
-import diagramvisualizer.model.LagrangeInterpolate;
-import diagramvisualizer.model.SplineInterpolate;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -290,8 +287,8 @@ public class Diagram extends JPanel {
                         x2 = calculateXCoordinate(graphsToDraw.getGraf().getPointX(i + 1));
                         y1 = calculateYCoordinate(graphsToDraw.getGraf().getPointY(i));
                         y2 = calculateYCoordinate(graphsToDraw.getGraf().getPointY(i + 1));
-                        double dx = x2 - x1;
-                        double dy = y2 - y1;
+                        double dx = (double)(x2 - x1);
+                        double dy = (double)(y2 - y1);
                         double angle = Math.atan2(dy, dx);
                         int realLength = (int) Math.sqrt(dx * dx + dy * dy);
                         g.fillOval(x1 - graphsToDraw.getLineSize(),
@@ -310,7 +307,6 @@ public class Diagram extends JPanel {
                                 -graphsToDraw.getLineSize(),
                                 realLength,
                                 2 * graphsToDraw.getLineSize());
-
                     }
                 }
             }

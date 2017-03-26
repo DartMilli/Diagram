@@ -321,6 +321,7 @@ public class GraphControlPanel extends JPanel
             nameOfNewData.setText("New...");
             menu.getView().addGraph(adjustedGraph);
             comboModel.addElement(adjustedGraph);
+            comboModel.setSelectedItem(adjustedGraph);
         } else if (component.getName() == Names.REMOVEDATA.name()) {
             menu.getView().removeGraph(adjustedGraph);
             comboModel.removeElement(adjustedGraph);
@@ -332,18 +333,21 @@ public class GraphControlPanel extends JPanel
             adjustedGraph = new GraphToDraw(trend, adjustedGraph.getName() + "_reg", Color.BLACK, true, 0, 0, 0);
             menu.getView().addGraph(adjustedGraph);
             comboModel.addElement(adjustedGraph);
+            comboModel.setSelectedItem(adjustedGraph);
         } else if (component.getName() == Names.ADDLAGRANGE.name()) {
             LagrangeInterpolate li = new LagrangeInterpolate(adjustedGraph.getGraf());
             DotSeries lagrangeInterpoltedData = li.getInterpolatedData();
             adjustedGraph = new GraphToDraw(lagrangeInterpoltedData, adjustedGraph.getName() + "_lag", Color.BLACK, true, 0, 0, 0);
             menu.getView().addGraph(adjustedGraph);
             comboModel.addElement(adjustedGraph);
+            comboModel.setSelectedItem(adjustedGraph);
         } else if (component.getName() == Names.ADDSPLINE.name()) {
             SplineInterpolate si = new SplineInterpolate(adjustedGraph.getGraf());
             DotSeries splineInterpoltedData = si.getInterpolatedData();
             adjustedGraph = new GraphToDraw(splineInterpoltedData, adjustedGraph.getName() + "_spl", Color.BLACK, true, 0, 0, 0);
             menu.getView().addGraph(adjustedGraph);
             comboModel.addElement(adjustedGraph);
+            comboModel.setSelectedItem(adjustedGraph);
         }
         menu.getView().repaint();
     }
