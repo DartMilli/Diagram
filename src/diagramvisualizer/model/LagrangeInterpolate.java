@@ -69,18 +69,18 @@ public class LagrangeInterpolate {
         return interpolatedData;
     }
 
-    public static void main(String[] args) {
-        double[] x;
-        double[] y;
-        boolean test = true;
-        if (test) {
-            x = new double[]{1, 2, 3, 4, 5};
-            y = new double[]{2, 3, 2, 0.5, 1.5};
-        } else {
-            x = new double[]{111, 31, 55, 65, 14, 32, 105, 82, 130, 88, 28, 61, 65, 98};
-            y = new double[]{12.4, 5.2, 5.5, 7.6, 1.6, 4.3, 9, 7.8, 10.5, 9.8, 2, 3.7, 3.5, 7.6};
-        }
-        LagrangeInterpolate l = new LagrangeInterpolate(new DotSeries(x, y));
-    }
+//    public static void main(String[] args) {
+//        double[] x;
+//        double[] y;
+//        boolean test = true;
+//        if (test) {
+//            x = new double[]{1, 2, 3, 4, 5};
+//            y = new double[]{2, 3, 2, 0.5, 1.5};
+//        } else {
+//            x = new double[]{111, 31, 55, 65, 14, 32, 105, 82, 130, 88, 28, 61, 65, 98};
+//            y = new double[]{12.4, 5.2, 5.5, 7.6, 1.6, 4.3, 9, 7.8, 10.5, 9.8, 2, 3.7, 3.5, 7.6};
+//        }
+//        LagrangeInterpolate l = new LagrangeInterpolate(new DotSeries(x, y));
+//    }
 
 }

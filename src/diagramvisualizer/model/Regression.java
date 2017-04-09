@@ -1,6 +1,5 @@
 package diagramvisualizer.model;
 
-import diagramvisualizer.model.DotSeries;
 
 /**
  *
@@ -138,20 +137,20 @@ public class Regression {
         return out;
     }
 
-    public static void main(String[] args) {
-
-        double[] xPontok = new double[]{111, 31, 55, 65, 14, 32, 105, 82, 130, 88, 28, 61, 65, 98};
-        double[] yPontok = new double[]{12.4, 5.2, 5.5, 7.6, 1.6, 4.3, 9, 7.8, 10.5, 9.8, 2, 3.7, 3.5, 7.6};
-
-        DotSeries adatok = new DotSeries(xPontok, yPontok);
-
-        Regression reg = new Regression(adatok);
-        System.out.println("A meredekség: " + reg.getSlope());
-        System.out.println("A tengelymetszet: " + reg.getIntersection());
-        System.out.println("Az R2: " + reg.getR2());
-        System.out.println("A standard hiba: " + reg.getStdFault());
-        System.out.println("Az m hiba: " + reg.getSlopeFault());
-        System.out.println("A b hiba: " + reg.getIntersectionFault());
-    }
+//    public static void main(String[] args) {
+//
+//        double[] xPontok = new double[]{111, 31, 55, 65, 14, 32, 105, 82, 130, 88, 28, 61, 65, 98};
+//        double[] yPontok = new double[]{12.4, 5.2, 5.5, 7.6, 1.6, 4.3, 9, 7.8, 10.5, 9.8, 2, 3.7, 3.5, 7.6};
+//
+//        DotSeries adatok = new DotSeries(xPontok, yPontok);
+//
+//        Regression reg = new Regression(adatok);
+//        System.out.println("A meredekség: " + reg.getSlope());
+//        System.out.println("A tengelymetszet: " + reg.getIntersection());
+//        System.out.println("Az R2: " + reg.getR2());
+//        System.out.println("A standard hiba: " + reg.getStdFault());
+//        System.out.println("Az m hiba: " + reg.getSlopeFault());
+//        System.out.println("A b hiba: " + reg.getIntersectionFault());
+//    }
 
 }

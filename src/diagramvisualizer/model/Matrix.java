@@ -405,18 +405,18 @@ public class Matrix {
         return out;
     }
 
-    public static void main(String[] args) {
-        Matrix k = new Matrix(100, 101);
-        System.out.println("k mátrix:");
-        k.setMatrixRnd(-1.0, 1.0);
-        k.getMatrixConsole();
-        System.out.println("k mátrix gauss:");
-        k.getGauss().getMatrixConsole();
-        System.out.println("k mátrix fullgauss:");
-        k.getFullGauss().getMatrixConsole();
-        System.out.println("k mátrix Inverze:");
-        k.getInvers().getMatrixConsole();
-        System.out.println("k újra:");
-        k.getMatrixConsole();
-    }
+//    public static void main(String[] args) {
+//        Matrix k = new Matrix(100, 101);
+//        System.out.println("k mátrix:");
+//        k.setMatrixRnd(-1.0, 1.0);
+//        k.getMatrixConsole();
+//        System.out.println("k mátrix gauss:");
+//        k.getGauss().getMatrixConsole();
+//        System.out.println("k mátrix fullgauss:");
+//        k.getFullGauss().getMatrixConsole();
+//        System.out.println("k mátrix Inverze:");
+//        k.getInvers().getMatrixConsole();
+//        System.out.println("k újra:");
+//        k.getMatrixConsole();
+//    }
 }

@@ -14,6 +14,9 @@ import static javax.swing.JFrame.EXIT_ON_CLOSE;
  */
 public class DiagramVisualizer {
 
+    public DiagramVisualizer() {
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -27,7 +30,7 @@ public class DiagramVisualizer {
                         GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().getSize()
                 );
                 window.setSize(new Dimension(dmsn));
-                window.setTitle("Diagram Visualizer 1.0.3");
+                window.setTitle("Diagram Visualizer 1.0.4");
                 window.setLayout(null);
                 window.setResizable(false);
                 int margin = 10;

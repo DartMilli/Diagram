@@ -69,6 +69,7 @@ public class SplineInterpolate {
                 coefficients[i][j] = gm.getMatrix(4 * i + j, noOfCoefficients);
             }
         }
+        
     }
 
     private void generateInterpolatedData() {
@@ -112,24 +113,24 @@ public class SplineInterpolate {
         return interpolatedData;
     }
 
-    public static void main(String[] args) {
-        double[] x;
-        double[] y;
-        boolean test1 = true, test2 = true;
-        if (test1) {
-            if (test2) {
-                x = new double[]{1, 2, 3, 4, 5};
-                y = new double[]{2, 3, 2, 0.5, 1.5};
-            } else {
-                x = new double[]{1, 2, 3, 4};
-                y = new double[]{2, 3, 2, 0.5};
-            }
-
-        } else {
-            x = new double[]{111, 31, 55, 65, 14, 32, 105, 82, 130, 88, 28, 61, 65, 98};
-            y = new double[]{12.4, 5.2, 5.5, 7.6, 1.6, 4.3, 9, 7.8, 10.5, 9.8, 2, 3.7, 3.5, 7.6};
-        }
-        SplineInterpolate s = new SplineInterpolate(new DotSeries(x, y));
-    }
+//    public static void main(String[] args) {
+//        double[] x;
+//        double[] y;
+//        boolean test1 = true, test2 = true;
+//        if (test1) {
+//            if (test2) {
+//                x = new double[]{1, 2, 3, 4, 5};
+//                y = new double[]{2, 3, 2, 0.5, 1.5};
+//            } else {
+//                x = new double[]{1, 2, 3, 4};
+//                y = new double[]{2, 3, 2, 0.5};
+//            }
+//
+//        } else {
+//            x = new double[]{111, 31, 55, 65, 14, 32, 105, 82, 130, 88, 28, 61, 65, 98};
+//            y = new double[]{12.4, 5.2, 5.5, 7.6, 1.6, 4.3, 9, 7.8, 10.5, 9.8, 2, 3.7, 3.5, 7.6};
+//        }
+//        SplineInterpolate s = new SplineInterpolate(new DotSeries(x, y));
+//    }
 
 }
